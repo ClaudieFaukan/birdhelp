@@ -1,16 +1,25 @@
-# birdhelp
+## birdhelp
 
-Une application pour recenser les animaux en difficulté pour pallier à la grippe aviaire
+Une application pour recensé les animaux en difficulté pour pallier à la grippe aviaire
 
-## Getting Started
+# Getting Started
 
-This project is a starting point for a Flutter application.
+Le projet va se décomposer de la manière suivante:
+    1- Une application mobile (user)
+    2- Une Api qui va collecter les données envoyer depuis l'application
+    3- Une interface web pour administrateur 
 
-A few resources to get you started if this is your first Flutter project:
+# Les technos
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+L'application va être faite en flutter, et API maison sous symfony et d'autre librairie viendrons s'ajouter comme openStreetmap..
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# Le Use case typique
+
+1-L'utilisateur repère un animal blésser/en difficulté/perdu
+2-Prend son smartPhone avec l'application birdHelp et s'y connecte
+3- Prend en photo l'animal et ajoute une courte description de la situation et selectionne la categorie associe (errant;deces;blesser)
+4- Le cas est soumis à l'api
+5- Verfication si image OK et description OK 
+6- Ajout de ce cas dans l'API et est désormais visible sur une carte avec une pin geographique ou l'on peut cliquer pour en savoir plus (photo, description, categorie, utilisateur)
+
+   
