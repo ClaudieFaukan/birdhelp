@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -13,7 +14,15 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
 
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
   @override
+  void dispose(){
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
@@ -48,6 +57,8 @@ class _LoginPageState extends State<LoginPage> {
     return Column(
       children: [
         TextField(
+          controller: emailController,
+          textInputAction: TextInputAction.done,
           decoration: InputDecoration(
             hintText: 'Adresse mail',
             fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
@@ -62,6 +73,7 @@ class _LoginPageState extends State<LoginPage> {
           height: 10,
         ),
         TextField(
+          controller: passwordController,
           decoration: InputDecoration(
             hintText: "Votre mot de passe",
             fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
@@ -78,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
         ElevatedButton(
           //TODO
-          onPressed: () {},
+          onPressed: signIn,
           child: const Text(
             "Se connecter",
             style: TextStyle(fontSize: 20),
@@ -117,6 +129,13 @@ class _LoginPageState extends State<LoginPage> {
             Fluttertoast.showToast(msg: 'I am circle whatsapp');
           }),
         ],
+    );
+  }
+
+  Future signIn() async{
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
     );
   }
 }
