@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -27,18 +28,18 @@ class _SignUpPageState extends State<SignUpPage>{
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-      body: Container(
-        margin: EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly ,
-          children: [
-            _header(context),
-            _inputFields(context),
-            _loginInfo(context),
-          ],
-        ),
-      ),
-    ));
+          body: Container(
+            margin: EdgeInsets.all(24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly ,
+              children: [
+                _header(context),
+                _inputFields(context),
+                _loginInfo(context),
+              ],
+            ),
+          ),
+        ));
   }
 
   _header(context) {
@@ -52,8 +53,7 @@ class _SignUpPageState extends State<SignUpPage>{
   }
 
   _inputFields(context) {
-    return SingleChildScrollView(
-      child: Column(
+    return  Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           TextField(
@@ -71,6 +71,8 @@ class _SignUpPageState extends State<SignUpPage>{
             height: 10,
           ),
           TextField(
+            controller: emailController,
+            textInputAction: TextInputAction.done,
             decoration: InputDecoration(
               hintText: "Votre email",
               fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
@@ -85,6 +87,7 @@ class _SignUpPageState extends State<SignUpPage>{
             height: 10,
           ),
           TextField(
+            controller: passwordController,
             decoration: InputDecoration(
               hintText: "Votre mot de passe",
               fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
@@ -115,7 +118,7 @@ class _SignUpPageState extends State<SignUpPage>{
             height: 10,
           ),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: signIn,
             child: Text(
               "S'inscrire",
               style: TextStyle(fontSize: 20),
@@ -128,8 +131,7 @@ class _SignUpPageState extends State<SignUpPage>{
             ),
           ),
         ],
-      ),
-    );
+      );
   }
 
   _loginInfo(context){
@@ -141,5 +143,25 @@ class _SignUpPageState extends State<SignUpPage>{
       ],
     );
   }
+
+  Future signIn() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+    } on FirebaseAuthException catch (e) {
+      print(e);
+    }
+    navigatorKey.currentState!.popUntil((route) => route.isFirst);
+  }
+
 
 }
