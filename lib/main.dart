@@ -2,6 +2,7 @@ import 'package:birdhelp/acceuil_page.dart';
 import 'package:birdhelp/home_page.dart';
 import 'package:birdhelp/login_page.dart';
 import 'package:birdhelp/signup_page.dart';
+import 'package:birdhelp/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     //Permet de recevoir tout les material et y accéder comme le theme etc..
     return MaterialApp(
+      scaffoldMessengerKey: Utils.messengerKey,
       navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.green),

@@ -1,5 +1,6 @@
 import 'package:birdhelp/main.dart';
 import 'package:birdhelp/signup_page.dart';
+import 'package:birdhelp/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'widget.dart';
@@ -167,7 +168,7 @@ class _LoginPageState extends State<LoginPage> {
         password: passwordController.text.trim(),
       );
     } on FirebaseAuthException catch (e) {
-      print(e);
+      Utils.showSnackBar(e.message);
     }
     navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }
