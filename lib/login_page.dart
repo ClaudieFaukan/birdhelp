@@ -1,9 +1,9 @@
+import 'package:birdhelp/main.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -13,16 +13,16 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
   @override
-  void dispose(){
+  void dispose() {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
   }
+
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
@@ -43,13 +43,12 @@ class _LoginPageState extends State<LoginPage> {
   _header(context) {
     return Column(
       children: [
-
         const Text(
           "Se connecter",
           style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
         ),
         Image.asset("images/login/hello.gif"),
-     ],
+      ],
     );
   }
 
@@ -97,45 +96,56 @@ class _LoginPageState extends State<LoginPage> {
           ),
           style: ElevatedButton.styleFrom(
               shape: StadiumBorder(),
-              padding: const EdgeInsets.symmetric(
-                  vertical: 16
-              )
-          ),
+              padding: const EdgeInsets.symmetric(vertical: 16)),
         ),
         const SizedBox(
           height: 10,
         ),
-        Text("Ou connecter vous avec ",style: TextStyle(fontStyle: FontStyle.italic),),
+        Text(
+          "Ou connecter vous avec ",
+          style: TextStyle(fontStyle: FontStyle.italic),
+        ),
       ],
     );
   }
+
   _loginByTiers(context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          CustomWidgets.socialButtonCircle(
-              facebookColor, FontAwesomeIcons.facebookF,
-              iconColor: Colors.white, onTap: () {
-            Fluttertoast.showToast(msg: 'I am circle facebook');
-          }),
-          CustomWidgets.socialButtonCircle(
-              googleColor, FontAwesomeIcons.google,
-              iconColor: Colors.white, onTap: () {
-            Fluttertoast.showToast(msg: 'I am circle google');
-          }),
-          CustomWidgets.socialButtonCircle(
-              twitterColor, FontAwesomeIcons.twitter,
-              iconColor: Colors.white, onTap: () {
-            Fluttertoast.showToast(msg: 'I am circle whatsapp');
-          }),
-        ],
+      children: [
+        CustomWidgets.socialButtonCircle(
+            facebookColor, FontAwesomeIcons.facebookF, iconColor: Colors.white,
+            onTap: () {
+          Fluttertoast.showToast(msg: 'I am circle facebook');
+        }),
+        CustomWidgets.socialButtonCircle(googleColor, FontAwesomeIcons.google,
+            iconColor: Colors.white, onTap: () {
+          Fluttertoast.showToast(msg: 'I am circle google');
+        }),
+        CustomWidgets.socialButtonCircle(twitterColor, FontAwesomeIcons.twitter,
+            iconColor: Colors.white, onTap: () {
+          Fluttertoast.showToast(msg: 'I am circle whatsapp');
+        }),
+      ],
     );
   }
 
-  Future signIn() async{
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
+  Future signIn() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
-    );
+      );
+    } on FirebaseAuthException catch (e) {
+      print(e);
+    }
+    navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }
 }
