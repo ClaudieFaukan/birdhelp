@@ -1,4 +1,5 @@
 import 'package:birdhelp/main.dart';
+import 'package:birdhelp/signup_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'widget.dart';
@@ -98,6 +99,7 @@ class _LoginPageState extends State<LoginPage> {
               shape: StadiumBorder(),
               padding: const EdgeInsets.symmetric(vertical: 16)),
         ),
+        _loginInfo(context),
         const SizedBox(
           height: 10,
         ),
@@ -105,6 +107,27 @@ class _LoginPageState extends State<LoginPage> {
           "Ou connecter vous avec ",
           style: TextStyle(fontStyle: FontStyle.italic),
         ),
+      ],
+    );
+  }
+
+  _loginInfo(context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text("Pas encore de compte ?"),
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (BuildContext context) {
+                  return const SignUpPage();
+                },
+              ),
+            );
+          },
+          child: Text("S'inscrire"),
+        )
       ],
     );
   }
