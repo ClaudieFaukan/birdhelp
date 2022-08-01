@@ -1,3 +1,5 @@
+import 'package:birdhelp/utils.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +15,7 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage>{
-
+  final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -53,85 +55,92 @@ class _SignUpPageState extends State<SignUpPage>{
   }
 
   _inputFields(context) {
-    return  Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          TextField(
-            decoration: InputDecoration(
-              hintText: "Votre pseudo",
-              fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
-              filled: true,
-              prefixIcon: Icon(Icons.person),
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(18),
-                  borderSide: BorderSide.none),
+    return  Form(
+      key: formKey,
+       child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextField(
+              decoration: InputDecoration(
+                hintText: "Votre pseudo",
+                fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
+                filled: true,
+                prefixIcon: Icon(Icons.person),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(18),
+                    borderSide: BorderSide.none),
+              ),
             ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          TextField(
-            controller: emailController,
-            textInputAction: TextInputAction.done,
-            decoration: InputDecoration(
-              hintText: "Votre email",
-              fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
-              filled: true,
-              prefixIcon: Icon(Icons.email_outlined),
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(18),
-                  borderSide: BorderSide.none),
+            SizedBox(
+              height: 10,
             ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          TextField(
-            controller: passwordController,
-            decoration: InputDecoration(
-              hintText: "Votre mot de passe",
-              fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
-              filled: true,
-              prefixIcon: Icon(Icons.password_outlined),
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(18),
-                  borderSide: BorderSide.none),
+            TextFormField(
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (email) => email != null && !EmailValidator.validate(email)?'Entrer 6 caracteres min':null,
+              controller: emailController,
+              textInputAction: TextInputAction.done,
+              decoration: InputDecoration(
+                hintText: "Votre email",
+                fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
+                filled: true,
+                prefixIcon: Icon(Icons.email_outlined),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(18),
+                    borderSide: BorderSide.none),
+              ),
             ),
-            obscureText: true,
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          TextField(
-            decoration: InputDecoration(
-              hintText: "Confirmer votre mot de passe",
-              fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
-              filled: true,
-              prefixIcon: Icon(Icons.password_outlined),
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(18),
-                  borderSide: BorderSide.none),
+            SizedBox(
+              height: 10,
             ),
-            obscureText: true,
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          ElevatedButton(
-            onPressed: signIn,
-            child: Text(
-              "S'inscrire",
-              style: TextStyle(fontSize: 20),
+            TextFormField(
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value)=> value != null && value.length < 6 ?'Entrer un email valide': null,
+              controller: passwordController,
+              decoration: InputDecoration(
+                hintText: "Votre mot de passe",
+                fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
+                filled: true,
+                prefixIcon: Icon(Icons.password_outlined),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(18),
+                    borderSide: BorderSide.none),
+              ),
+              obscureText: true,
             ),
-            style: ElevatedButton.styleFrom(
-                shape: StadiumBorder(),
-                padding: EdgeInsets.symmetric(
-                    vertical: 16
-                )
+            SizedBox(
+              height: 10,
             ),
-          ),
-        ],
-      );
+            TextField(
+              decoration: InputDecoration(
+                hintText: "Confirmer votre mot de passe",
+                fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
+                filled: true,
+                prefixIcon: Icon(Icons.password_outlined),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(18),
+                    borderSide: BorderSide.none),
+              ),
+              obscureText: true,
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            ElevatedButton(
+              onPressed: signIn,
+              child: Text(
+                "S'inscrire",
+                style: TextStyle(fontSize: 20),
+              ),
+              style: ElevatedButton.styleFrom(
+                  shape: StadiumBorder(),
+                  padding: EdgeInsets.symmetric(
+                      vertical: 16
+                  )
+              ),
+            ),
+          ],
+        )
+    );
   }
 
   _loginInfo(context){
@@ -145,6 +154,9 @@ class _SignUpPageState extends State<SignUpPage>{
   }
 
   Future signIn() async {
+    final isValid = formKey.currentState!.validate();
+    if(!isValid) return;
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -158,7 +170,7 @@ class _SignUpPageState extends State<SignUpPage>{
         password: passwordController.text.trim(),
       );
     } on FirebaseAuthException catch (e) {
-      print(e);
+      Utils.showSnackBar(e.message);
     }
     navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }
