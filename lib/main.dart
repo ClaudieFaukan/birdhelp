@@ -1,5 +1,5 @@
 import 'package:birdhelp/home_page.dart';
-import 'package:birdhelp/signin_page.dart';
+import 'package:birdhelp/signup_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -32,7 +32,7 @@ class _RootPageState extends State<RootPage> {
 
   List<Widget> pages = const [
     HomePage(),
-    SignInPage()
+    SignUpPage()
   ];
 
   @override

@@ -1,5 +1,5 @@
 import 'package:birdhelp/login_page.dart';
-import 'package:birdhelp/signin_page.dart';
+import 'package:birdhelp/signup_page.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
@@ -10,12 +10,6 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          Container(
-            child: const Text(
-              "Bienvenue sur BirdHelp ",
-              style: TextStyle(color: Colors.lightGreen),
-            ),
-          ),
           Image.asset('images/welcome/croco.gif'),
           Container(
             child: const Text(
@@ -27,6 +21,7 @@ class HomePage extends StatelessWidget {
             margin: const EdgeInsets.all(10),
             child: const Text(
               "Notre service permet de recuillir les données géographique des animaux blésser/décéder ou perdu. Pour faire face aux décès massif des goélands , les autorités compétente recommande de ne pas s'approcher lors d'animaux mort ",
+              style: TextStyle(color: Colors.black, fontSize: 10),
             ),
           ),
           Container(
@@ -38,7 +33,7 @@ class HomePage extends StatelessWidget {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (BuildContext context) {
-                          return const SignInPage();
+                          return const SignUpPage();
                         },
                       ),
                     );
