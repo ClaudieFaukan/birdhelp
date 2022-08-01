@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "335305026788",
+    "project_id": "birdhelp-335d6",
+    "storage_bucket": "birdhelp-335d6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:335305026788:android:2edb3265610ed6fdc250f1",
+        "android_client_info": {
+          "package_name": "com.example.birdhelp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "335305026788-nj7ugvemlskn0b6rlgqvjo2khroavr6c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqo9AleX-ZiHn1YO0Ba9CO0fjtcr1MmvY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "335305026788-nj7ugvemlskn0b6rlgqvjo2khroavr6c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
