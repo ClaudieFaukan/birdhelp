@@ -109,6 +109,7 @@ class _LoginPageState extends State<LoginPage> {
               shape: StadiumBorder(),
               padding: const EdgeInsets.symmetric(vertical: 16)),
         ),
+        _loginInfo(context),
         const SizedBox(
           height: 10,
         ),
