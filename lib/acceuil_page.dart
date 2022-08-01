@@ -1,8 +1,13 @@
+import 'package:birdhelp/google_sign_in.dart';
+import 'package:birdhelp/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AcceuilPage extends StatelessWidget {
   const AcceuilPage({Key? key}) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +17,6 @@ class AcceuilPage extends StatelessWidget {
         child: Column(
       children: [
         Text("Page Acceuil connexion succesfull"),
-        Text(user.email!),
         _signOut(context)
       ],
 
@@ -31,7 +35,13 @@ class AcceuilPage extends StatelessWidget {
             'Deconnection',
             style: TextStyle(fontSize: 24),
           ),
-          onPressed: ()=> FirebaseAuth.instance.signOut(),
+          onPressed: () async {
+            if(GoogleSignInProvider.isGoogleUser){
+              GoogleSignIn().disconnect();
+              FirebaseAuth.instance.signOut();
+            }
+            FirebaseAuth.instance.signOut();
+            },
         )
       ],
     );
