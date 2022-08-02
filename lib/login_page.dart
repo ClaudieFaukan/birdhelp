@@ -3,6 +3,7 @@ import 'package:birdhelp/signup_page.dart';
 import 'package:birdhelp/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'forgot_password_page.dart';
 import 'widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -90,7 +91,6 @@ class _LoginPageState extends State<LoginPage> {
           height: 10,
         ),
         ElevatedButton(
-          //TODO
           onPressed: signIn,
           child: const Text(
             "Se connecter",
@@ -99,6 +99,19 @@ class _LoginPageState extends State<LoginPage> {
           style: ElevatedButton.styleFrom(
               shape: StadiumBorder(),
               padding: const EdgeInsets.symmetric(vertical: 16)),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        GestureDetector(
+          child: Text(
+            'Mot de passe oublié?',
+            style: TextStyle(
+                decoration: TextDecoration.underline,
+                color: Theme.of(context).colorScheme.background,
+                fontSize: 20),
+          ),
+          onTap: ()=>Navigator.of(context).push(MaterialPageRoute(builder: (context)=> ForgotPasswordPage()),),
         ),
         _loginInfo(context),
         const SizedBox(
