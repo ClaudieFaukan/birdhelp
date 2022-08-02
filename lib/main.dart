@@ -3,6 +3,7 @@ import 'package:birdhelp/home_page.dart';
 import 'package:birdhelp/login_page.dart';
 import 'package:birdhelp/signup_page.dart';
 import 'package:birdhelp/utils.dart';
+import 'package:birdhelp/verify_email_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -47,7 +48,8 @@ class _RootPageState extends State<RootPage> {
   List<Widget> pages = const [
     HomePage(),
     AcceuilPage(),
-    SignUpPage()
+    SignUpPage(),
+    VerifyEmailPage(),
   ];
 
   @override
@@ -63,7 +65,7 @@ class _RootPageState extends State<RootPage> {
             return Center(child:Text("Something went wrong"),);
           }
           else if(snapshot.hasData){
-            return AcceuilPage();
+            return VerifyEmailPage();
           }else{
             return HomePage();
           }
