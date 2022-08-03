@@ -1,20 +1,21 @@
-import 'package:birdhelp/google_sign_in.dart';
-import 'package:birdhelp/setting.dart';
-import 'package:birdhelp/utils.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:open_street_map_search_and_pick/open_street_map_search_and_pick.dart';
 
+import 'acceuil_page.dart';
 import 'my_account_page.dart';
+
+class SettingPage extends StatefulWidget {
+  const SettingPage({Key? key}) : super(key: key);
+
+  @override
+  _SettingPageState createState() => _SettingPageState();
+}
 
 List<Widget> pages = const [MyAccountPage(), AcceuilPage(), SettingPage()];
 
-class AcceuilPage extends StatelessWidget {
-  const AcceuilPage({Key? key}) : super(key: key);
-
+class _SettingPageState extends State<SettingPage> {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser!;
@@ -27,8 +28,7 @@ class AcceuilPage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text("Page Acceuil connexion succesfull"),
-                  Text("${user}"),
+                  Text("Page Settings"),
                 ],
               ),
             ),
@@ -46,7 +46,7 @@ class AcceuilPage extends StatelessWidget {
         TabItem(icon: Icons.add_circle),
         TabItem(icon: Icons.settings),
       ],
-      initialActiveIndex: 1,
+      initialActiveIndex: 2,
       onTap: (int i) => Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => pages[i]),
       ),

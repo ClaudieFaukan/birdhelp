@@ -106,7 +106,6 @@ class _LoginPageState extends State<LoginPage> {
               shape: StadiumBorder(),
               padding: const EdgeInsets.symmetric(vertical: 16)),
         ),
-        _loginInfo(context),
         const SizedBox(
           height: 10,
         ),
@@ -166,8 +165,18 @@ class _LoginPageState extends State<LoginPage> {
         }),
         CustomWidgets.socialButtonCircle(googleColor, FontAwesomeIcons.google,
             iconColor: Colors.white, onTap: () async {
+
           final provider =
               Provider.of<GoogleSignInProvider>(context, listen: false);
+          //retest ici la deconnection en mettant à jour l'etat de déconnexion
+          // peut acceder a l'acceuil sans repasser par le sign sign in si on fait pas ça
+          setState(() {
+            try{
+            provider.logout();
+            }catch(e){
+              print(e.toString());
+            }
+          });
           await provider.googleLogin();
           navigatorKey.currentState!.popUntil((route) => route.isFirst);
         }),
