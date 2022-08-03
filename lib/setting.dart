@@ -1,3 +1,4 @@
+import 'package:birdhelp/camera_page.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,7 +14,7 @@ class SettingPage extends StatefulWidget {
   _SettingPageState createState() => _SettingPageState();
 }
 
-List<Widget> pages = const [MyAccountPage(), AcceuilPage(), SettingPage()];
+List<Widget> pages = const [MyAccountPage(), AcceuilPage(), SettingPage(), CameraPage()];
 
 class _SettingPageState extends State<SettingPage> {
   @override
@@ -45,6 +46,7 @@ class _SettingPageState extends State<SettingPage> {
         TabItem(icon: Icons.person),
         TabItem(icon: Icons.add_circle),
         TabItem(icon: Icons.settings),
+        TabItem(icon: Icons.camera_alt_outlined)
       ],
       initialActiveIndex: 2,
       onTap: (int i) => Navigator.of(context).push(

@@ -6,9 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'acceuil_page.dart';
+import 'camera_page.dart';
 import 'google_sign_in.dart';
 
-List<Widget> pages = const [MyAccountPage(), AcceuilPage(), SettingPage()];
+List<Widget> pages = const [MyAccountPage(), AcceuilPage(), SettingPage(),CameraPage(),];
 
 class MyAccountPage extends StatefulWidget {
   const MyAccountPage({Key? key}) : super(key: key);
@@ -49,6 +50,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
         TabItem(icon: Icons.person),
         TabItem(icon: Icons.add_circle),
         TabItem(icon: Icons.settings),
+        TabItem(icon: Icons.camera_alt_outlined)
       ],
       initialActiveIndex: 0,
       onTap: (int i) => Navigator.of(context).push(
