@@ -1,4 +1,5 @@
 import 'package:birdhelp/acceuil_page.dart';
+import 'package:birdhelp/google_sign_in.dart';
 import 'package:birdhelp/home_page.dart';
 import 'package:birdhelp/login_page.dart';
 import 'package:birdhelp/signup_page.dart';
@@ -7,6 +8,7 @@ import 'package:birdhelp/verify_email_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 
 
 Future<void> main() async{
@@ -25,13 +27,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //Permet de recevoir tout les material et y accéder comme le theme etc..
-    return MaterialApp(
+    return ChangeNotifierProvider(
+      create: (context) => GoogleSignInProvider(),
+      child: MaterialApp(
       scaffoldMessengerKey: Utils.messengerKey,
       navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.green),
       home: RootPage(),
+    )
     );
+
   }
 }
 
@@ -43,6 +49,7 @@ class RootPage extends StatefulWidget {
 }
 
 class _RootPageState extends State<RootPage> {
+  static bool isGoogleUser = false;
   int currentPage = 0;
 
   List<Widget> pages = const [

@@ -1,3 +1,4 @@
+import 'package:birdhelp/login_page.dart';
 import 'package:birdhelp/utils.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,10 +12,9 @@ class SignUpPage extends StatefulWidget {
 
   @override
   State<SignUpPage> createState() => _SignUpPageState();
-
 }
 
-class _SignUpPageState extends State<SignUpPage>{
+class _SignUpPageState extends State<SignUpPage> {
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -30,18 +30,18 @@ class _SignUpPageState extends State<SignUpPage>{
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-          body: Container(
-            margin: EdgeInsets.all(24),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly ,
-              children: [
-                _header(context),
-                _inputFields(context),
-                _loginInfo(context),
-              ],
-            ),
-          ),
-        ));
+      body: Container(
+        margin: EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _header(context),
+            _inputFields(context),
+            _loginInfo(context),
+          ],
+        ),
+      ),
+    ));
   }
 
   _header(context) {
@@ -55,9 +55,9 @@ class _SignUpPageState extends State<SignUpPage>{
   }
 
   _inputFields(context) {
-    return  Form(
-      key: formKey,
-       child: Column(
+    return Form(
+        key: formKey,
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             TextField(
@@ -76,7 +76,10 @@ class _SignUpPageState extends State<SignUpPage>{
             ),
             TextFormField(
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (email) => email != null && !EmailValidator.validate(email)?'Entrer 6 caracteres min':null,
+              validator: (email) =>
+                  email != null && !EmailValidator.validate(email)
+                      ? 'Entrer 6 caracteres min'
+                      : null,
               controller: emailController,
               textInputAction: TextInputAction.done,
               decoration: InputDecoration(
@@ -94,7 +97,9 @@ class _SignUpPageState extends State<SignUpPage>{
             ),
             TextFormField(
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (value)=> value != null && value.length < 6 ?'Entrer un email valide': null,
+              validator: (value) => value != null && value.length < 6
+                  ? 'Entrer un email valide'
+                  : null,
               controller: passwordController,
               decoration: InputDecoration(
                 hintText: "Votre mot de passe",
@@ -133,29 +138,34 @@ class _SignUpPageState extends State<SignUpPage>{
               ),
               style: ElevatedButton.styleFrom(
                   shape: StadiumBorder(),
-                  padding: EdgeInsets.symmetric(
-                      vertical: 16
-                  )
-              ),
+                  padding: EdgeInsets.symmetric(vertical: 16)),
             ),
           ],
-        )
-    );
+        ));
   }
 
-  _loginInfo(context){
+  _loginInfo(context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text("Déjà un compte ?"),
-        TextButton(onPressed: (){}, child: Text("Se connecter"),)
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => LoginPage(),
+              ),
+            );
+          },
+          child: Text("Se connecter"),
+        )
       ],
     );
   }
 
   Future signIn() async {
     final isValid = formKey.currentState!.validate();
-    if(!isValid) return;
+    if (!isValid) return;
 
     showDialog(
       context: context,
@@ -174,6 +184,4 @@ class _SignUpPageState extends State<SignUpPage>{
     }
     navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }
-
-
 }

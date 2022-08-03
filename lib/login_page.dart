@@ -1,8 +1,11 @@
+import 'package:birdhelp/acceuil_page.dart';
+import 'package:birdhelp/google_sign_in.dart';
 import 'package:birdhelp/main.dart';
 import 'package:birdhelp/signup_page.dart';
 import 'package:birdhelp/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'forgot_password_page.dart';
 import 'widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -28,19 +31,22 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Scaffold(
-      body: Container(
-        margin: EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _header(context),
-            _inputFields(context),
-            _loginByTiers(context),
-          ],
+      child: Scaffold(
+        body: SingleChildScrollView(
+          child: Container(
+            margin: EdgeInsets.all(24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _header(context),
+                _inputFields(context),
+                _loginByTiers(context),
+              ],
+            ),
+          ),
         ),
       ),
-    ));
+    );
   }
 
   _header(context) {
@@ -111,7 +117,9 @@ class _LoginPageState extends State<LoginPage> {
                 color: Theme.of(context).colorScheme.background,
                 fontSize: 20),
           ),
-          onTap: ()=>Navigator.of(context).push(MaterialPageRoute(builder: (context)=> ForgotPasswordPage()),),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => ForgotPasswordPage()),
+          ),
         ),
         _loginInfo(context),
         const SizedBox(
@@ -156,8 +164,21 @@ class _LoginPageState extends State<LoginPage> {
           Fluttertoast.showToast(msg: 'I am circle facebook');
         }),
         CustomWidgets.socialButtonCircle(googleColor, FontAwesomeIcons.google,
-            iconColor: Colors.white, onTap: () {
-          Fluttertoast.showToast(msg: 'I am circle google');
+            iconColor: Colors.white, onTap: () async {
+
+          final provider =
+              Provider.of<GoogleSignInProvider>(context, listen: false);
+          //retest ici la deconnection en mettant à jour l'etat de déconnexion
+          // peut acceder a l'acceuil sans repasser par le sign sign in si on fait pas ça
+          setState(() {
+            try{
+            provider.logout();
+            }catch(e){
+              print(e.toString());
+            }
+          });
+          await provider.googleLogin();
+          navigatorKey.currentState!.popUntil((route) => route.isFirst);
         }),
         CustomWidgets.socialButtonCircle(twitterColor, FontAwesomeIcons.twitter,
             iconColor: Colors.white, onTap: () {
