@@ -5,7 +5,10 @@ import 'package:birdhelp/signup_page.dart';
 import 'package:birdhelp/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+<<<<<<< HEAD
 import 'package:provider/provider.dart';
+=======
+>>>>>>> firebaseAuthenfication
 import 'forgot_password_page.dart';
 import 'widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -117,9 +120,13 @@ class _LoginPageState extends State<LoginPage> {
                 color: Theme.of(context).colorScheme.background,
                 fontSize: 20),
           ),
+<<<<<<< HEAD
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => ForgotPasswordPage()),
           ),
+=======
+          onTap: ()=>Navigator.of(context).push(MaterialPageRoute(builder: (context)=> ForgotPasswordPage()),),
+>>>>>>> firebaseAuthenfication
         ),
         _loginInfo(context),
         const SizedBox(
