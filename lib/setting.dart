@@ -1,29 +1,39 @@
-import 'package:birdhelp/google_sign_in.dart';
-import 'package:birdhelp/setting.dart';
-import 'package:birdhelp/tap_to_add.dart';
-import 'package:birdhelp/utils.dart';
+import 'package:birdhelp/camera_page.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:open_street_map_search_and_pick/open_street_map_search_and_pick.dart';
 
-import 'camera_page.dart';
+import 'acceuil_page.dart';
 import 'my_account_page.dart';
 
-List<Widget> pages = const [MyAccountPage(), AcceuilPage(), SettingPage(),CameraPage()];
+class SettingPage extends StatefulWidget {
+  const SettingPage({Key? key}) : super(key: key);
 
-class AcceuilPage extends StatelessWidget {
-  const AcceuilPage({Key? key}) : super(key: key);
+  @override
+  _SettingPageState createState() => _SettingPageState();
+}
 
+List<Widget> pages = const [MyAccountPage(), AcceuilPage(), SettingPage(), CameraPage()];
+
+class _SettingPageState extends State<SettingPage> {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser!;
 
     return SafeArea(
       child: Scaffold(
-          body: TapToAddPage(),
+          body: SingleChildScrollView(
+            child: Container(
+              margin: EdgeInsets.all(24),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text("Page Settings"),
+                ],
+              ),
+            ),
+          ),
           bottomNavigationBar: _bottomAppBar(context)),
     );
   }
@@ -38,7 +48,7 @@ class AcceuilPage extends StatelessWidget {
         TabItem(icon: Icons.settings),
         TabItem(icon: Icons.camera_alt_outlined)
       ],
-      initialActiveIndex: 1,
+      initialActiveIndex: 2,
       onTap: (int i) => Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => pages[i]),
       ),
