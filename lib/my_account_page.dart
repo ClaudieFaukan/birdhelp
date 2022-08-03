@@ -1,4 +1,5 @@
 import 'package:birdhelp/home_page.dart';
+import 'package:birdhelp/map_to_add.dart';
 import 'package:birdhelp/setting.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,7 +10,7 @@ import 'acceuil_page.dart';
 import 'camera_page.dart';
 import 'google_sign_in.dart';
 
-List<Widget> pages = const [MyAccountPage(), AcceuilPage(), SettingPage(),CameraPage(),];
+List<Widget> pages = const [MyAccountPage(), AcceuilPage(), SettingPage(),CameraPage(),TapToAddPage()];
 
 class MyAccountPage extends StatefulWidget {
   const MyAccountPage({Key? key}) : super(key: key);
@@ -50,7 +51,9 @@ class _MyAccountPageState extends State<MyAccountPage> {
         TabItem(icon: Icons.person),
         TabItem(icon: Icons.add_circle),
         TabItem(icon: Icons.settings),
-        TabItem(icon: Icons.camera_alt_outlined)
+        TabItem(icon: Icons.camera_alt_outlined),
+        TabItem(icon: Icons.gps_fixed)
+
       ],
       initialActiveIndex: 0,
       onTap: (int i) => Navigator.of(context).push(
