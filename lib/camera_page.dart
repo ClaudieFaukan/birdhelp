@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:birdhelp/setting.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'acceuil_page.dart';
@@ -13,20 +14,38 @@ class CameraPage extends StatefulWidget {
 
   @override
   _CameraPageState createState() => _CameraPageState();
-
 }
-List<Widget> pages = const [MyAccountPage(), AcceuilPage(), SettingPage(), CameraPage()];
+
+List<Widget> pages = const [
+  MyAccountPage(),
+  AcceuilPage(),
+  SettingPage(),
+  CameraPage()
+];
 
 class _CameraPageState extends State<CameraPage> {
-
-  File? _image ;
+  File? _image;
   final imagePicker = ImagePicker();
 
-  Future getImage() async {
+  Future pickCamera() async {
     final image = await imagePicker.pickImage(source: ImageSource.camera);
     setState(() {
       _image = File(image!.path);
     });
+  }
+  
+  Future pickImage() async {
+    try {
+      final _image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (_image == null) return;
+      final imageTemporary = File(_image.path);
+
+      setState(() {
+        this._image = imageTemporary;
+      });
+    }on PlatformException catch (e){
+      print("Failed to pick image : $e");
+    }
   }
 
   @override
@@ -40,12 +59,19 @@ class _CameraPageState extends State<CameraPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Center(
-                    child: _image == null ? Text("Pas d'image selectionner") : Image.file(_image!),
+                    child: _image == null
+                        ? Text("Pas d'image selectionner")
+                        : Image.file(_image!),
                   ),
-                 FloatingActionButton(
-                   backgroundColor: Colors.orange,
-                     child: Icon(Icons.camera_alt_outlined),
-                     onPressed: getImage)
+                  FloatingActionButton(
+                      backgroundColor: Colors.orange,
+                      child: Icon(Icons.camera_alt_outlined),
+                      onPressed: pickCamera),
+                  ElevatedButton.icon(
+                    icon: Icon(Icons.image),
+                    onPressed: pickImage,
+                    label: Text("Gallery"),
+                  ),
                 ],
               ),
             ),
@@ -53,7 +79,6 @@ class _CameraPageState extends State<CameraPage> {
           bottomNavigationBar: _bottomAppBar(context)),
     );
   }
-
 }
 
 _bottomAppBar(context) {
@@ -72,4 +97,3 @@ _bottomAppBar(context) {
     ),
   );
 }
-
