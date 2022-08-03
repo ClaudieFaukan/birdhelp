@@ -1,5 +1,6 @@
 import 'package:birdhelp/google_sign_in.dart';
 import 'package:birdhelp/setting.dart';
+import 'package:birdhelp/tap_to_add.dart';
 import 'package:birdhelp/utils.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -21,18 +22,7 @@ class AcceuilPage extends StatelessWidget {
 
     return SafeArea(
       child: Scaffold(
-          body: SingleChildScrollView(
-            child: Container(
-              margin: EdgeInsets.all(24),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Text("Page Acceuil connexion succesfull"),
-                  Text("${user}"),
-                ],
-              ),
-            ),
-          ),
+          body: TapToAddPage(),
           bottomNavigationBar: _bottomAppBar(context)),
     );
   }
