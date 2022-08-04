@@ -1,6 +1,7 @@
 import 'package:birdhelp/login_page.dart';
 import 'package:birdhelp/utils.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:firebase/firebase.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -60,17 +61,6 @@ class _SignUpPageState extends State<SignUpPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            TextField(
-              decoration: InputDecoration(
-                hintText: "Votre pseudo",
-                fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
-                filled: true,
-                prefixIcon: Icon(Icons.person),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(18),
-                    borderSide: BorderSide.none),
-              ),
-            ),
             SizedBox(
               height: 10,
             ),
@@ -78,7 +68,7 @@ class _SignUpPageState extends State<SignUpPage> {
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (email) =>
                   email != null && !EmailValidator.validate(email)
-                      ? 'Entrer 6 caracteres min'
+                      ? 'Entrer une adresse mail valide'
                       : null,
               controller: emailController,
               textInputAction: TextInputAction.done,
@@ -98,7 +88,7 @@ class _SignUpPageState extends State<SignUpPage> {
             TextFormField(
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) => value != null && value.length < 6
-                  ? 'Entrer un email valide'
+                  ? 'Entrer 6 caracteres min'
                   : null,
               controller: passwordController,
               decoration: InputDecoration(
