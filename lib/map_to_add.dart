@@ -1,9 +1,13 @@
+import 'package:birdhelp/setting.dart';
+import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:positioned_tap_detector_2/positioned_tap_detector_2.dart';
 
-import '../widgets/drawer.dart';
+import 'acceuil_page.dart';
+import 'camera_page.dart';
+import 'my_account_page.dart';
 
 class TapToAddPage extends StatefulWidget {
   static const String route = '/tap';
@@ -15,7 +19,7 @@ class TapToAddPage extends StatefulWidget {
     return TapToAddPageState();
   }
 }
-
+List<Widget> pages = const [MyAccountPage(), AcceuilPage(), SettingPage(),CameraPage(),TapToAddPage()];
 class TapToAddPageState extends State<TapToAddPage> {
   List<LatLng> tappedPoints = [];
 
@@ -32,7 +36,6 @@ class TapToAddPageState extends State<TapToAddPage> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Tap to add pins')),
-      drawer: buildDrawer(context, TapToAddPage.route),
       body: Padding(
         padding: const EdgeInsets.all(8),
         child: Column(
@@ -50,7 +53,7 @@ class TapToAddPageState extends State<TapToAddPage> {
                 layers: [
                   TileLayerOptions(
                     urlTemplate:
-                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                     userAgentPackageName: 'dev.fleaflet.flutter_map.example',
                   ),
                   MarkerLayerOptions(markers: markers)
@@ -60,7 +63,9 @@ class TapToAddPageState extends State<TapToAddPage> {
           ],
         ),
       ),
+      bottomNavigationBar: _bottomAppBar(context),
     );
+    
   }
 
   void _handleTap(TapPosition tapPosition, LatLng latlng) {
@@ -68,4 +73,22 @@ class TapToAddPageState extends State<TapToAddPage> {
       tappedPoints.add(latlng);
     });
   }
+}
+
+_bottomAppBar(context) {
+  return ConvexAppBar(
+    backgroundColor: Colors.green,
+    style: TabStyle.reactCircle,
+    items: [
+      TabItem(icon: Icons.person),
+      TabItem(icon: Icons.add_circle),
+      TabItem(icon: Icons.settings),
+      TabItem(icon: Icons.camera_alt_outlined),
+      TabItem(icon: Icons.gps_fixed),
+    ],
+    initialActiveIndex: 4,
+    onTap: (int i) => Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => pages[i]),
+    ),
+  );
 }
