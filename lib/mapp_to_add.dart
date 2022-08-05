@@ -32,6 +32,7 @@ class TapToAddPageState extends State<TapToAddPage> {
   var long ;
 
   getCurrentLocation() async{
+
     final Location location = Location();
     LocationData _locationData =  await location.getLocation();
     setState(() {
@@ -42,9 +43,9 @@ class TapToAddPageState extends State<TapToAddPage> {
 
   @override
   Widget build (BuildContext context) {
-    while (lat == null && long == null){
-       getCurrentLocation();
-       sleep(Duration(seconds: 3));
+
+    if( lat == null && long == null) {
+      getCurrentLocation();
     }
 
     final markers = tappedPoints.map((latlng) {
@@ -52,7 +53,7 @@ class TapToAddPageState extends State<TapToAddPage> {
         width: 80,
         height: 80,
         point: latlng,
-        builder: (ctx) => const Icon(Icons.pin_drop,color: Colors.red,),
+        builder: (ctx) => const Icon(Icons.pin_drop,color: Colors.red, size: 40,),
       );
     }).toList();
 
@@ -70,7 +71,7 @@ class TapToAddPageState extends State<TapToAddPage> {
               child: FlutterMap(
                 options: MapOptions(
                     center: LatLng(lat, long),
-                    zoom: 20,
+                    zoom: 17,
                     onTap: _handleTap),
                 layers: [
                   TileLayerOptions(
