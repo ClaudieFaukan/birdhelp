@@ -1,13 +1,17 @@
+import 'dart:io';
+
 import 'package:birdhelp/setting.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:location/location.dart';
 import 'package:positioned_tap_detector_2/positioned_tap_detector_2.dart';
 
 import 'acceuil_page.dart';
 import 'camera_page.dart';
 import 'my_account_page.dart';
+
 
 class TapToAddPage extends StatefulWidget {
   static const String route = '/tap';
@@ -19,18 +23,36 @@ class TapToAddPage extends StatefulWidget {
     return TapToAddPageState();
   }
 }
+
 List<Widget> pages = const [MyAccountPage(), AcceuilPage(), SettingPage(),CameraPage(),TapToAddPage()];
 class TapToAddPageState extends State<TapToAddPage> {
   List<LatLng> tappedPoints = [];
 
+  var  lat ;
+  var long ;
+
+  getCurrentLocation() async{
+    final Location location = Location();
+    LocationData _locationData =  await location.getLocation();
+    setState(() {
+      lat = _locationData.latitude;
+      long = _locationData.longitude;
+    });
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build (BuildContext context) {
+    while (lat == null && long == null){
+       getCurrentLocation();
+       sleep(Duration(seconds: 3));
+    }
+
     final markers = tappedPoints.map((latlng) {
       return Marker(
         width: 80,
         height: 80,
         point: latlng,
-        builder: (ctx) => const FlutterLogo(),
+        builder: (ctx) => const Icon(Icons.pin_drop,color: Colors.red,),
       );
     }).toList();
 
@@ -42,13 +64,13 @@ class TapToAddPageState extends State<TapToAddPage> {
           children: [
             const Padding(
               padding: EdgeInsets.only(top: 8, bottom: 8),
-              child: Text('Tap to add pins'),
+              child: Text('add pin'),
             ),
             Flexible(
               child: FlutterMap(
                 options: MapOptions(
-                    center: LatLng(45.5231, -122.6765),
-                    zoom: 13,
+                    center: LatLng(lat, long),
+                    zoom: 20,
                     onTap: _handleTap),
                 layers: [
                   TileLayerOptions(
@@ -92,3 +114,4 @@ _bottomAppBar(context) {
     ),
   );
 }
+

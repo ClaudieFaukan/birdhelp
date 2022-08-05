@@ -9,10 +9,30 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
+import 'package:location/location.dart';
 
 
 Future<void> main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  Location location = Location();
+
+  bool _serviceEnabled = await location.serviceEnabled();
+  if(!_serviceEnabled){
+    _serviceEnabled = await location.requestService();
+    if(!_serviceEnabled){
+      return;
+    }
+  }
+  PermissionStatus _persmissionGranted = await location.hasPermission();
+  if(_persmissionGranted == PermissionStatus.denied){
+    _persmissionGranted = await location.requestPermission();
+    if(_persmissionGranted != PermissionStatus.granted){
+      return;
+    }
+  }
+
+
+  //on s'assure que la bdd est initialiser
   await Firebase.initializeApp();
 
   runApp(MyApp());

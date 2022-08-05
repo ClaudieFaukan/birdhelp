@@ -1,4 +1,5 @@
 import 'package:birdhelp/google_sign_in.dart';
+import 'package:birdhelp/mapp_to_add.dart';
 import 'package:birdhelp/setting.dart';
 import 'package:birdhelp/utils.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
@@ -11,7 +12,7 @@ import 'package:open_street_map_search_and_pick/open_street_map_search_and_pick.
 import 'camera_page.dart';
 import 'my_account_page.dart';
 
-List<Widget> pages = const [MyAccountPage(), AcceuilPage(), SettingPage(),CameraPage()];
+List<Widget> pages = const [MyAccountPage(), AcceuilPage(), SettingPage(),CameraPage(),TapToAddPage()];
 
 class AcceuilPage extends StatelessWidget {
   const AcceuilPage({Key? key}) : super(key: key);
@@ -46,7 +47,8 @@ class AcceuilPage extends StatelessWidget {
         TabItem(icon: Icons.person),
         TabItem(icon: Icons.add_circle),
         TabItem(icon: Icons.settings),
-        TabItem(icon: Icons.camera_alt_outlined)
+        TabItem(icon: Icons.camera_alt_outlined),
+        TabItem(icon: Icons.gps_fixed),
       ],
       initialActiveIndex: 1,
       onTap: (int i) => Navigator.of(context).push(

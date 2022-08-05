@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'acceuil_page.dart';
+import 'mapp_to_add.dart';
 import 'my_account_page.dart';
 
 class SettingPage extends StatefulWidget {
@@ -14,7 +15,7 @@ class SettingPage extends StatefulWidget {
   _SettingPageState createState() => _SettingPageState();
 }
 
-List<Widget> pages = const [MyAccountPage(), AcceuilPage(), SettingPage(), CameraPage()];
+List<Widget> pages = const [MyAccountPage(), AcceuilPage(), SettingPage(),CameraPage(),TapToAddPage()];
 
 class _SettingPageState extends State<SettingPage> {
   @override
@@ -46,7 +47,8 @@ class _SettingPageState extends State<SettingPage> {
         TabItem(icon: Icons.person),
         TabItem(icon: Icons.add_circle),
         TabItem(icon: Icons.settings),
-        TabItem(icon: Icons.camera_alt_outlined)
+        TabItem(icon: Icons.camera_alt_outlined),
+        TabItem(icon: Icons.gps_fixed),
       ],
       initialActiveIndex: 2,
       onTap: (int i) => Navigator.of(context).push(
