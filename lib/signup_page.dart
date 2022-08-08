@@ -115,7 +115,10 @@ class _SignUpPageState extends State<SignUpPage> {
             SizedBox(
               height: 10,
             ),
-            TextField(
+            TextFormField(
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) => value != passwordController.text.trim()?
+              "Mot de passe différent": null,
               decoration: InputDecoration(
                 hintText: "Confirmer votre mot de passe",
                 fillColor: Theme.of(context).primaryColor.withOpacity(0.1),

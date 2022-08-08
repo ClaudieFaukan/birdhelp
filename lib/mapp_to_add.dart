@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:birdhelp/models/fiche.dart';
 import 'package:birdhelp/setting.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -45,17 +47,19 @@ class TapToAddPageState extends State<TapToAddPage> {
   Widget build (BuildContext context) {
 
     if( lat == null && long == null) {
+
       getCurrentLocation();
     }
 
     final markers = tappedPoints.map((latlng) {
       return Marker(
-        width: 80,
-        height: 80,
+        width: 100,
+        height: 100,
         point: latlng,
         builder: (ctx) => const Icon(Icons.pin_drop,color: Colors.red, size: 40,),
       );
     }).toList();
+
 
     return Scaffold(
       appBar: AppBar(title: const Text('Tap to add pins')),
@@ -72,7 +76,9 @@ class TapToAddPageState extends State<TapToAddPage> {
                 options: MapOptions(
                     center: LatLng(lat, long),
                     zoom: 17,
-                    onTap: _handleTap),
+                    onTap: _handleTap,
+                  onLongPress: _handleLongPress
+                ),
                 layers: [
                   TileLayerOptions(
                     urlTemplate:
@@ -92,11 +98,22 @@ class TapToAddPageState extends State<TapToAddPage> {
   }
 
   void _handleTap(TapPosition tapPosition, LatLng latlng) {
+
     setState(() {
       tappedPoints.add(latlng);
     });
   }
+
+
+  void _handleLongPress(TapPosition tapPosition, LatLng latlng){
+
+      setState(() {
+        tappedPoints.clear();
+      });
+  }
 }
+
+
 
 _bottomAppBar(context) {
   return ConvexAppBar(

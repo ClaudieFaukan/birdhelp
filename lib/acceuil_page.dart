@@ -1,3 +1,4 @@
+import 'package:birdhelp/add_fiche_page.dart';
 import 'package:birdhelp/google_sign_in.dart';
 import 'package:birdhelp/mapp_to_add.dart';
 import 'package:birdhelp/setting.dart';
@@ -29,8 +30,16 @@ class AcceuilPage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text("Page Acceuil connexion succesfull"),
-                  Text("${user}"),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => AddFichePage(),
+                        ),
+                      );
+                    },
+                    child: Text("Signaler un animal en difficulté"),
+                  )
                 ],
               ),
             ),
