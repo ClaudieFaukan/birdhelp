@@ -29,27 +29,31 @@ class TapToAddPage extends StatefulWidget {
 List<Widget> pages = const [MyAccountPage(), AcceuilPage(), SettingPage(),CameraPage(),TapToAddPage()];
 class TapToAddPageState extends State<TapToAddPage> {
   List<LatLng> tappedPoints = [];
+  bool isLoaded = false;
 
-  var  lat ;
-  var long ;
+  @override
+  void initState(){
+    super.initState();
+    getCurrentLocation();
+  }
+
+  double lat = 0.0 ;
+ double long = 0.0 ;
 
   getCurrentLocation() async{
 
     final Location location = Location();
     LocationData _locationData =  await location.getLocation();
     setState(() {
-      lat = _locationData.latitude;
-      long = _locationData.longitude;
+      lat = _locationData.latitude!;
+      long = _locationData.longitude!;
+      isLoaded = true;
     });
   }
 
   @override
   Widget build (BuildContext context) {
 
-    if( lat == null && long == null) {
-
-      getCurrentLocation();
-    }
 
     final markers = tappedPoints.map((latlng) {
       return Marker(
@@ -65,7 +69,9 @@ class TapToAddPageState extends State<TapToAddPage> {
       appBar: AppBar(title: const Text('Tap to add pins')),
       body: Padding(
         padding: const EdgeInsets.all(8),
-        child: Column(
+        child: Visibility(
+          visible: isLoaded,
+          child:Column(
           children: [
             const Padding(
               padding: EdgeInsets.only(top: 8, bottom: 8),
@@ -90,6 +96,8 @@ class TapToAddPageState extends State<TapToAddPage> {
               ),
             ),
           ],
+        ),
+          replacement: Center(child: CircularProgressIndicator(),),
         ),
       ),
       bottomNavigationBar: _bottomAppBar(context),

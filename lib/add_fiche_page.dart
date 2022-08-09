@@ -26,9 +26,9 @@ class _AddFichePageState extends State<AddFichePage> {
     super.initState();
     getCategoriesData();
     getHealthStatus();
-
   }
-  File? _image ;
+
+  File? _image;
   final imagePicker = ImagePicker();
 
   Future pickCamera() async {
@@ -45,7 +45,7 @@ class _AddFichePageState extends State<AddFichePage> {
 
       final imageTemporary = File(_image.path);
       setState(() => this._image = imageTemporary);
-    }on PlatformException catch (e){
+    } on PlatformException catch (e) {
       print('failed to pick image $e');
     }
   }
@@ -61,7 +61,7 @@ class _AddFichePageState extends State<AddFichePage> {
 
   getHealthStatus() async {
     status = await RemoteService().getStatus();
-    if(status != null){
+    if (status != null) {
       setState(() {
         categoriesIsLoaded = true;
       });
@@ -70,41 +70,37 @@ class _AddFichePageState extends State<AddFichePage> {
 
   @override
   Widget build(BuildContext context) {
-
-    var categoriesItem = categories?.map((item){
-      return DropdownMenuItem<Categories>(child: Text(item.name),value: item);
+    var categoriesItem = categories?.map((item) {
+      return DropdownMenuItem<Categories>(child: Text(item.name), value: item);
     }).toList();
 
-    var statusItem = status?.map((e){
-      return DropdownMenuItem<HealthStatus>(child: Text(e.status),value: e);
+    var statusItem = status?.map((e) {
+      return DropdownMenuItem<HealthStatus>(child: Text(e.status), value: e);
     }).toList();
-
 
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
-        child:Container(
-          margin: EdgeInsets.all(24),
-          child: Visibility(
-            visible: categoriesIsLoaded,
-            child: Column(
-              children:[
+          child: Container(
+            margin: EdgeInsets.all(24),
+            child: Visibility(
+              visible: categoriesIsLoaded,
+              child: Column(children: [
                 _header(context),
                 _label("Categorie Animal"),
                 DropdownButton<Categories>(
                   isExpanded: true,
                   hint: Text("Categorie Animal"),
-                  value: _selectedCategorie,
                   items: categoriesItem,
-                  onChanged: (valu)=> setState(() => _selectedCategorie = valu!),
+                  onChanged: (valu) =>
+                      setState(() => _selectedCategorie = valu!),
                 ),
                 _label("Etat de santé"),
                 DropdownButton<HealthStatus>(
                   isExpanded: true,
                   hint: Text("Etat de sante"),
-                  value: _selectedStatus,
                   items: statusItem,
-                  onChanged: (valu)=> setState(() => _selectedStatus = valu!),
+                  onChanged: (valu) => setState(() => _selectedStatus = valu!),
                 ),
                 _label("Description de l'animal"),
                 TextField(
@@ -117,42 +113,68 @@ class _AddFichePageState extends State<AddFichePage> {
                         borderSide: BorderSide.none),
                   ),
                 ),
+                _label("Cliché de l'animal"),
                 Center(
-                  child: _image == null ? Text("Pas d'image selectionner") : Image.file(_image!),
+                  child: _image == null
+                      ? Text("Pas d'image selectionner")
+                      : Image.file(_image!),
                 ),
                 FloatingActionButton(
                     backgroundColor: Colors.orange,
                     child: Icon(Icons.camera_alt_outlined),
                     onPressed: pickCamera),
-                ElevatedButton.icon(icon: Icon(Icons.image),label: Text("gallery"),onPressed: pickGallery,),
+                ElevatedButton.icon(
+                  icon: Icon(Icons.image),
+                  label: Text("gallery"),
+                  onPressed: pickGallery,
+                ),
                 _label("Ou l'animal se situe ?"),
-                ElevatedButton.icon(onPressed: (){
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => TapToAddPage()));
-                }, icon: Icon(Icons.pin_drop), label: Text("coordonnée de l'animal")),
+                ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => TapToAddPage(),
+                        ),
+                      );
+                    },
+                    icon: Icon(Icons.pin_drop),
+                    label: Text("coordonnée de l'animal")),
+                _label("Description de la situation"),
+                _label("Plus vous donnez d'infos, plus vous facilité la recherche de l'animal"),
+                TextField(
+                  keyboardType: TextInputType.multiline,
+                  textInputAction: TextInputAction.newline,
+                  minLines: 1,
+                  maxLines: 5,
+                ),
+                ElevatedButton.icon(
+                  onPressed: () {},
+                  icon: Icon(Icons.monitor_heart),
+                  label: Text("Je signale"),
+                ),
 
-                ElevatedButton.icon(onPressed: (){}, icon: Icon(Icons.monitor_heart), label: Text("Je signale")),
-              ]
+              ]),
+              replacement: const Center(
+                child: CircularProgressIndicator(),
               ),
-            replacement: const Center(
-              child: CircularProgressIndicator(),
             ),
           ),
         ),
-      ),
       ),
     );
   }
 
   _header(context) {
     return Container(
-      child:
-        Text("Signaler un animal en difficulté",
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+      child: Text("Signaler un animal en difficulté",
+          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
     );
   }
 
   _label(string) {
-    return Text(string,style: TextStyle(fontSize: 15),);
+    return Text(
+      string,
+      style: TextStyle(fontSize: 15),
+    );
   }
 }
