@@ -65,6 +65,11 @@ class _AddFichePageState extends State<AddFichePage> {
     }
 
     //photo
+    if(prefs.containsKey("image") == false ){
+      await prefs.setString("image", "");
+    }else{
+      _image = File(prefs.getString("image")!);
+    }
 
     //description
 
@@ -80,9 +85,13 @@ class _AddFichePageState extends State<AddFichePage> {
   final imagePicker = ImagePicker();
 
   Future pickCamera() async {
+
     final image = await imagePicker.pickImage(source: ImageSource.camera);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("image", image!.path.toString());
     setState(() {
       _image = File(image!.path);
+
     });
   }
 
