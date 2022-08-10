@@ -24,12 +24,13 @@ class _AddFichePageState extends State<AddFichePage> {
   bool categoriesIsLoaded = false;
   Coordinate coordinate = Coordinate(id: 0, longitude: 0.0, lattitude: 0.0);
 
-  final colorController = TextEditingController() ;
+  List<DropdownMenuItem<Categories>> categorieItem = [];
+
+  final colorController = TextEditingController();
   final animalController = TextEditingController();
   final healthController = TextEditingController();
   final imageController = TextEditingController();
   final descriptionController = TextEditingController();
-
 
   @override
   void initState() {
@@ -40,10 +41,9 @@ class _AddFichePageState extends State<AddFichePage> {
   }
 
   getPreferences() async {
-    //Coordianate
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
+    //Coordianate
     if (prefs.containsKey('long') == false &&
         prefs.containsKey('lat') == false) {
       await prefs.setDouble('long', 0.0);
@@ -53,7 +53,6 @@ class _AddFichePageState extends State<AddFichePage> {
       coordinate.lattitude = prefs.getDouble("lat")!;
     }
 
-    //Animal
 
     //Etat de sante
 
@@ -65,18 +64,15 @@ class _AddFichePageState extends State<AddFichePage> {
     }
 
     //photo
-    if(prefs.containsKey("image") == false ){
+    if (prefs.containsKey("image") == false) {
       await prefs.setString("image", "");
-    }else{
+    } else {
       _image = File(prefs.getString("image")!);
     }
-
     //description
-
-    if( prefs.containsKey("description") ==false ){
+    if (prefs.containsKey("description") == false) {
       await prefs.setString("description", "");
-    }
-    else{
+    } else {
       descriptionController.text = prefs.getString("description")!;
     }
   }
@@ -85,13 +81,11 @@ class _AddFichePageState extends State<AddFichePage> {
   final imagePicker = ImagePicker();
 
   Future pickCamera() async {
-
     final image = await imagePicker.pickImage(source: ImageSource.camera);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString("image", image!.path.toString());
     setState(() {
       _image = File(image!.path);
-
     });
   }
 
@@ -109,6 +103,7 @@ class _AddFichePageState extends State<AddFichePage> {
 
   getCategoriesData() async {
     categories = await RemoteService().getCategories();
+
     if (categories != null) {
       setState(() {
         categoriesIsLoaded = true;
@@ -127,14 +122,15 @@ class _AddFichePageState extends State<AddFichePage> {
 
   @override
   Widget build(BuildContext context) {
-    var categoriesItem = categories?.map((item) {
+    categorieItem = categories!.map((item) {
       return DropdownMenuItem<Categories>(child: Text(item.name), value: item);
     }).toList();
 
-    var statusItem = status?.map((e) {
+    var statusItem = status!.map((e) {
       return DropdownMenuItem<HealthStatus>(child: Text(e.status), value: e);
     }).toList();
 
+    SharedPreferences prefs;
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
@@ -142,33 +138,37 @@ class _AddFichePageState extends State<AddFichePage> {
             margin: EdgeInsets.all(24),
             child: Visibility(
               visible: categoriesIsLoaded,
-              replacement: const Center(
+              replacement: const Center(bird help
                 child: CircularProgressIndicator(),
               ),
               child: Column(children: [
                 _header(context),
-                _label("Categorie Animal"),
+                _label(
+                    "Categorie Animal"),
                 DropdownButton<Categories>(
+                  value: _selectedCategorie.id == 0 ? null : _selectedCategorie,
                   isExpanded: true,
                   hint: Text("Categorie Animal"),
-                  items: categoriesItem,
-                  onChanged: (valu) =>
-                      setState(() => _selectedCategorie = valu!),
+                  items: categorieItem,
+                  onChanged: (valu) => setState(() {
+                    _selectedCategorie = valu!;
+                  }),
                 ),
                 _label("Etat de santé"),
                 DropdownButton<HealthStatus>(
+                  value: _selectedStatus.id == 0 ?null : _selectedStatus,
                   isExpanded: true,
                   hint: Text("Etat de sante"),
                   items: statusItem,
                   onChanged: (valu) => setState(() => _selectedStatus = valu!),
                 ),
-                _label("Description de l'animal"),
+                _label("Couleur de l'animal"),
                 TextFormField(
                   controller: colorController,
                   onChanged: (value) async {
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
-                        await prefs.setString("color", value);
+                    await prefs.setString("color", value);
                   },
                   decoration: InputDecoration(
                     hintText: "Couleur de l'animal",
@@ -220,7 +220,7 @@ class _AddFichePageState extends State<AddFichePage> {
                   onChanged: (value) async {
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
-                        await prefs.setString("description", value);
+                    await prefs.setString("description", value);
                   },
                 ),
                 ElevatedButton.icon(
