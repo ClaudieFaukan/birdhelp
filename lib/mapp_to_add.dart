@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:open_street_map_search_and_pick/open_street_map_search_and_pick.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:birdhelp/add_fiche_page.dart';
 import 'package:birdhelp/models/coordinates.dart';
@@ -47,7 +48,7 @@ class TapToAddPageState extends State<TapToAddPage> {
   void initState() {
     super.initState();
     getCurrentLocation();
-
+    getPreferences();
   }
   getCurrentLocation() async {
     final Location location = Location();
@@ -57,6 +58,16 @@ class TapToAddPageState extends State<TapToAddPage> {
       long = _locationData.longitude!;
       isLoaded = true;
     });
+  }
+
+  getPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if(prefs.containsKey("long") && prefs.containsKey("lat")){
+
+      LatLng latLng = LatLng(prefs.getDouble("lat")!,prefs.getDouble("long")!);
+
+      tappedPoints.add(latLng);
+    }
   }
 
 
