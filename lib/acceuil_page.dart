@@ -1,6 +1,7 @@
 import 'package:birdhelp/add_fiche_page.dart';
 import 'package:birdhelp/google_sign_in.dart';
 import 'package:birdhelp/mapp_to_add.dart';
+import 'package:birdhelp/models/coordinates.dart';
 import 'package:birdhelp/setting.dart';
 import 'package:birdhelp/utils.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';

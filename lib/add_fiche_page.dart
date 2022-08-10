@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'package:birdhelp/mapp_to_add.dart';
 import 'package:birdhelp/models/categories.dart';
+import 'package:birdhelp/models/coordinates.dart';
 import 'package:birdhelp/models/health_status.dart';
 import 'package:birdhelp/services/remote_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddFichePage extends StatefulWidget {
   const AddFichePage({Key? key}) : super(key: key);
@@ -20,12 +22,58 @@ class _AddFichePageState extends State<AddFichePage> {
   List<Categories>? categories = [];
   List<HealthStatus>? status = [];
   bool categoriesIsLoaded = false;
+  Coordinate coordinate = Coordinate(id: 0, longitude: 0.0, lattitude: 0.0);
+
+  final colorController = TextEditingController() ;
+  final animalController = TextEditingController();
+  final healthController = TextEditingController();
+  final imageController = TextEditingController();
+  final descriptionController = TextEditingController();
+
 
   @override
   void initState() {
     super.initState();
     getCategoriesData();
     getHealthStatus();
+    getPreferences();
+  }
+
+  getPreferences() async {
+    //Coordianate
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (prefs.containsKey('long') == false &&
+        prefs.containsKey('lat') == false) {
+      await prefs.setDouble('long', 0.0);
+      await prefs.setDouble("lat", 0.0);
+    } else {
+      coordinate.longitude = prefs.getDouble("long")!;
+      coordinate.lattitude = prefs.getDouble("lat")!;
+    }
+
+    //Animal
+
+    //Etat de sante
+
+    //couleur
+    if (prefs.containsKey("color") == false) {
+      await prefs.setString("color", "");
+    } else {
+      colorController.text = prefs.getString("color")!;
+    }
+
+    //photo
+
+    //description
+
+    if( prefs.containsKey("description") ==false ){
+      await prefs.setString("description", "");
+    }
+    else{
+      descriptionController.text = prefs.getString("description")!;
+    }
   }
 
   File? _image;
@@ -85,6 +133,9 @@ class _AddFichePageState extends State<AddFichePage> {
             margin: EdgeInsets.all(24),
             child: Visibility(
               visible: categoriesIsLoaded,
+              replacement: const Center(
+                child: CircularProgressIndicator(),
+              ),
               child: Column(children: [
                 _header(context),
                 _label("Categorie Animal"),
@@ -103,7 +154,13 @@ class _AddFichePageState extends State<AddFichePage> {
                   onChanged: (valu) => setState(() => _selectedStatus = valu!),
                 ),
                 _label("Description de l'animal"),
-                TextField(
+                TextFormField(
+                  controller: colorController,
+                  onChanged: (value) async {
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                        await prefs.setString("color", value);
+                  },
                   decoration: InputDecoration(
                     hintText: "Couleur de l'animal",
                     fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
@@ -130,33 +187,39 @@ class _AddFichePageState extends State<AddFichePage> {
                 ),
                 _label("Ou l'animal se situe ?"),
                 ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => TapToAddPage(),
-                        ),
-                      );
-                    },
-                    icon: Icon(Icons.pin_drop),
-                    label: Text("coordonnée de l'animal")),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => TapToAddPage(),
+                      ),
+                    );
+                  },
+                  icon: Icon(Icons.pin_drop),
+                  label: Text("coordonnée de l'animal"),
+                ),
+                Text(
+                    "Coordonee : ${coordinate.lattitude.toString()} -  ${coordinate.longitude.toString()} "),
                 _label("Description de la situation"),
-                _label("Plus vous donnez d'infos, plus vous facilité la recherche de l'animal"),
-                TextField(
+                _label(
+                    "Plus vous donnez d'infos, plus vous facilité la recherche de l'animal"),
+                TextFormField(
+                  controller: descriptionController,
                   keyboardType: TextInputType.multiline,
                   textInputAction: TextInputAction.newline,
                   minLines: 1,
                   maxLines: 5,
+                  onChanged: (value) async {
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                        await prefs.setString("description", value);
+                  },
                 ),
                 ElevatedButton.icon(
                   onPressed: () {},
                   icon: Icon(Icons.monitor_heart),
                   label: Text("Je signale"),
                 ),
-
               ]),
-              replacement: const Center(
-                child: CircularProgressIndicator(),
-              ),
             ),
           ),
         ),

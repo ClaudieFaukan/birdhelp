@@ -16,8 +16,8 @@ class Coordinate {
   });
 
   int id;
-  String longitude;
-  String lattitude;
+  double longitude;
+  double lattitude;
 
   factory Coordinate.fromJson(Map<String, dynamic> json) => Coordinate(
     id: json["id"],

@@ -9,7 +9,7 @@ class RemoteService {
   
     Future<List<Categories>?> getCategories() async {
       
-    var uri = Uri.parse("https://159a-2a01-cb06-30c-2200-ed04-a696-af2e-7b72.eu.ngrok.io/categories");
+    var uri = Uri.parse("https://c9fd-2a01-cb06-30c-2200-e925-7f9f-2bf3-3f8e.eu.ngrok.io/categories");
     var response = await client.get(uri);
     
       if(response.statusCode == 200){
@@ -20,7 +20,7 @@ class RemoteService {
     }
   
   Future<List<HealthStatus>?> getStatus() async{
-    var url = Uri.parse("https://159a-2a01-cb06-30c-2200-ed04-a696-af2e-7b72.eu.ngrok.io/healthstatus");
+    var url = Uri.parse("https://c9fd-2a01-cb06-30c-2200-e925-7f9f-2bf3-3f8e.eu.ngrok.io/healthstatus");
     var responseStatus = await client.get(url);
 
       if(responseStatus.statusCode == 200 ){
