@@ -18,6 +18,7 @@ class Fiche {
     required this.healthstatus,
     required this.description,
     required this.category,
+    required this.color,
   });
 
   String? helper;
@@ -28,6 +29,7 @@ class Fiche {
   int? healthstatus;
   String? description;
   int? category;
+  String? color;
 
   factory Fiche.fromJson(Map<String, dynamic> json) => Fiche(
     helper: json["helper"],
@@ -38,6 +40,7 @@ class Fiche {
     healthstatus: json["healthstatus"],
     description: json["description"],
     category: json["category"],
+    color: json["color"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -49,5 +52,6 @@ class Fiche {
     "healthstatus": healthstatus,
     "description": description,
     "category": category,
+    "color": color,
   };
 }

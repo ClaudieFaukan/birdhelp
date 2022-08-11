@@ -19,7 +19,7 @@ class AddFichePage extends StatefulWidget {
 }
 
 class _AddFichePageState extends State<AddFichePage> {
-  Fiche fiche = Fiche(helper: "0", animal: 0, geographicCoordinate: [0.0], date: DateTime.now(), healthstatus: 0, description: "", category: 0);
+  Fiche fiche = Fiche(helper: "0", animal: 0, geographicCoordinate: [0.0], date: DateTime.now(), healthstatus: 0, description: "", category: 0, color: "");
   Categories _selectedCategorie = Categories(id: 0, name: "Categorie Animal");
   HealthStatus _selectedStatus = HealthStatus(id: 0, status: "Etat de Santé");
   List<Categories>? categories = [];
@@ -190,6 +190,7 @@ class _AddFichePageState extends State<AddFichePage> {
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
                     await prefs.setString("color", value);
+                    fiche.color = prefs.getString("color");
                   },
                   decoration: InputDecoration(
                     hintText: "Couleur de l'animal",
@@ -234,7 +235,7 @@ class _AddFichePageState extends State<AddFichePage> {
                     //verifier si tout les element sont present
                     //on envoi tout à une methode externe qui fera le taff
                     //On redirige vers un success ou Non
-                    RemoteService().postFiche(fiche);
+                    RemoteService().postFiche(fiche,context);
                   },
                   icon: Icon(Icons.monitor_heart),
                   label: Text("Je signale"),
