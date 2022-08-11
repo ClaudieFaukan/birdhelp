@@ -1,16 +1,15 @@
 import 'package:birdhelp/home_page.dart';
 import 'package:birdhelp/mapp_to_add.dart';
 import 'package:birdhelp/setting.dart';
+import 'package:birdhelp/widget.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'acceuil_page.dart';
-import 'camera_page.dart';
 import 'google_sign_in.dart';
 
-List<Widget> pages = const [MyAccountPage(), AcceuilPage(), SettingPage(),CameraPage(),TapToAddPage()];
 
 class MyAccountPage extends StatefulWidget {
   const MyAccountPage({Key? key}) : super(key: key);
@@ -39,25 +38,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
               ),
             ),
           ),
-          bottomNavigationBar: _bottomAppBar(context)),
-    );
-  }
-
-  _bottomAppBar(context) {
-    return ConvexAppBar(
-      backgroundColor: Colors.green,
-      style: TabStyle.reactCircle,
-      items: [
-        TabItem(icon: Icons.person),
-        TabItem(icon: Icons.add_circle),
-        TabItem(icon: Icons.settings),
-        TabItem(icon: Icons.camera_alt_outlined),
-        TabItem(icon: Icons.gps_fixed),
-      ],
-      initialActiveIndex: 0,
-      onTap: (int i) => Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => pages[i]),
-      ),
+          bottomNavigationBar: CustomWidgets.bottomAppBar(context)),
     );
   }
 

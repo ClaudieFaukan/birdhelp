@@ -50,7 +50,6 @@ class RemoteService {
   try{
     var url = Uri.parse("$apiUrl/fiche");
     var ficheparse = ficheToJson(fiche);
-    print(ficheparse);
     var response = await client.post(url,
         headers: {HttpHeaders.contentTypeHeader: "application/json"},
         body: ficheparse);

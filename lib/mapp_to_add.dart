@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:birdhelp/widget.dart';
 import 'package:open_street_map_search_and_pick/open_street_map_search_and_pick.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:birdhelp/add_fiche_page.dart';
@@ -14,7 +15,6 @@ import 'package:location/location.dart';
 import 'package:positioned_tap_detector_2/positioned_tap_detector_2.dart';
 
 import 'acceuil_page.dart';
-import 'camera_page.dart';
 import 'my_account_page.dart';
 
 class TapToAddPage extends StatefulWidget {
@@ -27,14 +27,6 @@ class TapToAddPage extends StatefulWidget {
     return TapToAddPageState();
   }
 }
-
-List<Widget> pages = const [
-  MyAccountPage(),
-  AcceuilPage(),
-  SettingPage(),
-  CameraPage(),
-  TapToAddPage()
-];
 
 class TapToAddPageState extends State<TapToAddPage> {
   double lat = 0.0;
@@ -150,7 +142,7 @@ class TapToAddPageState extends State<TapToAddPage> {
           ),
         ),
       ),
-      bottomNavigationBar: _bottomAppBar(context),
+      bottomNavigationBar: CustomWidgets.bottomAppBar(context),
     );
   }
 
@@ -172,20 +164,5 @@ class TapToAddPageState extends State<TapToAddPage> {
   }
 }
 
-_bottomAppBar(context) {
-  return ConvexAppBar(
-    backgroundColor: Colors.green,
-    style: TabStyle.reactCircle,
-    items: [
-      TabItem(icon: Icons.person),
-      TabItem(icon: Icons.add_circle),
-      TabItem(icon: Icons.settings),
-      TabItem(icon: Icons.camera_alt_outlined),
-      TabItem(icon: Icons.gps_fixed),
-    ],
-    initialActiveIndex: 4,
-    onTap: (int i) => Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => pages[i]),
-    ),
-  );
-}
+
+

@@ -1,4 +1,5 @@
-import 'package:birdhelp/camera_page.dart';
+
+import 'package:birdhelp/widget.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,8 +15,6 @@ class SettingPage extends StatefulWidget {
   @override
   _SettingPageState createState() => _SettingPageState();
 }
-
-List<Widget> pages = const [MyAccountPage(), AcceuilPage(), SettingPage(),CameraPage(),TapToAddPage()];
 
 class _SettingPageState extends State<SettingPage> {
   @override
@@ -35,25 +34,8 @@ class _SettingPageState extends State<SettingPage> {
               ),
             ),
           ),
-          bottomNavigationBar: _bottomAppBar(context)),
+          bottomNavigationBar: CustomWidgets.bottomAppBar(context)),
     );
   }
 
-  _bottomAppBar(context) {
-    return ConvexAppBar(
-      backgroundColor: Colors.green,
-      style: TabStyle.reactCircle,
-      items: [
-        TabItem(icon: Icons.person),
-        TabItem(icon: Icons.add_circle),
-        TabItem(icon: Icons.settings),
-        TabItem(icon: Icons.camera_alt_outlined),
-        TabItem(icon: Icons.gps_fixed),
-      ],
-      initialActiveIndex: 2,
-      onTap: (int i) => Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => pages[i]),
-      ),
-    );
-  }
 }
