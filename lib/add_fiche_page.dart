@@ -2,8 +2,10 @@ import 'dart:io';
 import 'package:birdhelp/mapp_to_add.dart';
 import 'package:birdhelp/models/categories.dart';
 import 'package:birdhelp/models/coordinates.dart';
+import 'package:birdhelp/models/fiche.dart';
 import 'package:birdhelp/models/health_status.dart';
 import 'package:birdhelp/services/remote_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -17,11 +19,12 @@ class AddFichePage extends StatefulWidget {
 }
 
 class _AddFichePageState extends State<AddFichePage> {
+  Fiche fiche = Fiche(helper: "0", animal: 0, geographicCoordinate: [0.0], date: DateTime.now(), healthstatus: 0, description: "", category: 0);
   Categories _selectedCategorie = Categories(id: 0, name: "Categorie Animal");
   HealthStatus _selectedStatus = HealthStatus(id: 0, status: "Etat de Santé");
   List<Categories>? categories = [];
   List<HealthStatus>? status = [];
-  bool categoriesIsLoaded = false;
+  bool isLoaded = false;
   Coordinate coordinate = Coordinate(id: 0, longitude: 0.0, lattitude: 0.0);
 
   List<DropdownMenuItem<Categories>> categorieItem = [];
@@ -32,12 +35,16 @@ class _AddFichePageState extends State<AddFichePage> {
   final imageController = TextEditingController();
   final descriptionController = TextEditingController();
 
+  final user = FirebaseAuth.instance.currentUser;
+
   @override
   void initState() {
     super.initState();
     getCategoriesData();
     getHealthStatus();
     getPreferences();
+    fiche.helper = user?.uid;
+
   }
 
   getPreferences() async {
@@ -51,10 +58,8 @@ class _AddFichePageState extends State<AddFichePage> {
     } else {
       coordinate.longitude = prefs.getDouble("long")!;
       coordinate.lattitude = prefs.getDouble("lat")!;
+      fiche.geographicCoordinate = [coordinate.longitude,coordinate.lattitude];
     }
-
-
-    //Etat de sante
 
     //couleur
     if (prefs.containsKey("color") == false) {
@@ -103,10 +108,9 @@ class _AddFichePageState extends State<AddFichePage> {
 
   getCategoriesData() async {
     categories = await RemoteService().getCategories();
-
     if (categories != null) {
       setState(() {
-        categoriesIsLoaded = true;
+        isLoaded = true;
       });
     }
   }
@@ -115,13 +119,15 @@ class _AddFichePageState extends State<AddFichePage> {
     status = await RemoteService().getStatus();
     if (status != null) {
       setState(() {
-        categoriesIsLoaded = true;
+        isLoaded = true;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+
+
     categorieItem = categories!.map((item) {
       return DropdownMenuItem<Categories>(child: Text(item.name), value: item);
     }).toList();
@@ -137,12 +143,24 @@ class _AddFichePageState extends State<AddFichePage> {
           child: Container(
             margin: EdgeInsets.all(24),
             child: Visibility(
-              visible: categoriesIsLoaded,
-              replacement: const Center(bird help
+              visible: isLoaded,
+              replacement: const Center(
                 child: CircularProgressIndicator(),
               ),
               child: Column(children: [
                 _header(context),
+                _label("Ou l'animal se situe ?"),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => TapToAddPage(),
+                      ),
+                    );
+                  },
+                  icon: Icon(Icons.pin_drop),
+                  label: Text("coordonnée de l'animal"),
+                ),
                 _label(
                     "Categorie Animal"),
                 DropdownButton<Categories>(
@@ -152,15 +170,18 @@ class _AddFichePageState extends State<AddFichePage> {
                   items: categorieItem,
                   onChanged: (valu) => setState(() {
                     _selectedCategorie = valu!;
+                    fiche.animal = _selectedCategorie.id;
                   }),
                 ),
                 _label("Etat de santé"),
                 DropdownButton<HealthStatus>(
-                  value: _selectedStatus.id == 0 ?null : _selectedStatus,
+                  value: _selectedStatus.id == 0 ? null : _selectedStatus,
                   isExpanded: true,
                   hint: Text("Etat de sante"),
                   items: statusItem,
-                  onChanged: (valu) => setState(() => _selectedStatus = valu!),
+                  onChanged: (valu) => setState((){
+                  _selectedStatus = valu!;
+                  fiche.healthstatus = valu.id!;}),
                 ),
                 _label("Couleur de l'animal"),
                 TextFormField(
@@ -194,23 +215,7 @@ class _AddFichePageState extends State<AddFichePage> {
                   label: Text("gallery"),
                   onPressed: pickGallery,
                 ),
-                _label("Ou l'animal se situe ?"),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => TapToAddPage(),
-                      ),
-                    );
-                  },
-                  icon: Icon(Icons.pin_drop),
-                  label: Text("coordonnée de l'animal"),
-                ),
-                Text(
-                    "Coordonee : ${coordinate.lattitude.toString()} -  ${coordinate.longitude.toString()} "),
                 _label("Description de la situation"),
-                _label(
-                    "Plus vous donnez d'infos, plus vous facilité la recherche de l'animal"),
                 TextFormField(
                   controller: descriptionController,
                   keyboardType: TextInputType.multiline,
@@ -221,10 +226,16 @@ class _AddFichePageState extends State<AddFichePage> {
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
                     await prefs.setString("description", value);
+                    fiche.description = value;
                   },
                 ),
                 ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    //verifier si tout les element sont present
+                    //on envoi tout à une methode externe qui fera le taff
+                    //On redirige vers un success ou Non
+                    RemoteService().postFiche(fiche);
+                  },
                   icon: Icon(Icons.monitor_heart),
                   label: Text("Je signale"),
                 ),
