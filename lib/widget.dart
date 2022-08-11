@@ -4,7 +4,7 @@ import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
 
 import 'acceuil_page.dart';
-import 'mapp_to_add.dart';
+import 'map_animal_around_page.dart';
 import 'my_account_page.dart';
 
 const Color facebookColor = const Color(0xff39579A);
@@ -19,7 +19,7 @@ List<Widget> pages = const [
   MyAccountPage(),
   AcceuilPage(),
   AddFichePage(),
-  TapToAddPage()
+  MapAnimalAround()
 ];
 
 class CustomWidgets {
@@ -88,7 +88,7 @@ class CustomWidgets {
       case "AddFichePage":
         activeIndex = 2;
         break;
-      case "TapToAddPage":
+      case "MapAnimalAround":
         activeIndex = 3;
         break;
       default:

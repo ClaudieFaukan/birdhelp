@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:birdhelp/mapp_to_add.dart';
+import 'package:birdhelp/add_animal_on_map.dart';
 import 'package:birdhelp/models/categories.dart';
 import 'package:birdhelp/models/coordinates.dart';
 import 'package:birdhelp/models/fiche.dart';
@@ -11,6 +11,8 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'acceuil_page.dart';
+
 class AddFichePage extends StatefulWidget {
   const AddFichePage({Key? key}) : super(key: key);
 
@@ -19,7 +21,15 @@ class AddFichePage extends StatefulWidget {
 }
 
 class _AddFichePageState extends State<AddFichePage> {
-  Fiche fiche = Fiche(helper: "0", animal: 0, geographicCoordinate: [0.0], date: DateTime.now(), healthstatus: 0, description: "", category: 0, color: "");
+  Fiche fiche = Fiche(
+      helper: "0",
+      animal: 0,
+      geographicCoordinate: [0.0],
+      date: DateTime.now(),
+      healthstatus: 0,
+      description: "",
+      category: 0,
+      color: "");
   Categories _selectedCategorie = Categories(id: 0, name: "Categorie Animal");
   HealthStatus _selectedStatus = HealthStatus(id: 0, status: "Etat de Santé");
   List<Categories>? categories = [];
@@ -44,7 +54,6 @@ class _AddFichePageState extends State<AddFichePage> {
     getHealthStatus();
     getPreferences();
     fiche.helper = user?.uid;
-
   }
 
   getPreferences() async {
@@ -58,7 +67,7 @@ class _AddFichePageState extends State<AddFichePage> {
     } else {
       coordinate.longitude = prefs.getDouble("long")!;
       coordinate.lattitude = prefs.getDouble("lat")!;
-      fiche.geographicCoordinate = [coordinate.longitude,coordinate.lattitude];
+      fiche.geographicCoordinate = [coordinate.longitude, coordinate.lattitude];
     }
 
     //couleur
@@ -126,8 +135,6 @@ class _AddFichePageState extends State<AddFichePage> {
 
   @override
   Widget build(BuildContext context) {
-
-
     categorieItem = categories!.map((item) {
       return DropdownMenuItem<Categories>(child: Text(item.name), value: item);
     }).toList();
@@ -139,6 +146,20 @@ class _AddFichePageState extends State<AddFichePage> {
     SharedPreferences prefs;
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const AcceuilPage(),
+                    ),
+                  );
+                },
+                icon: Icon(Icons.home))
+          ],
+        ),
         body: SingleChildScrollView(
           child: Container(
             margin: EdgeInsets.all(24),
@@ -161,8 +182,7 @@ class _AddFichePageState extends State<AddFichePage> {
                   icon: Icon(Icons.pin_drop),
                   label: Text("coordonnée de l'animal"),
                 ),
-                _label(
-                    "Categorie Animal"),
+                _label("Categorie Animal"),
                 DropdownButton<Categories>(
                   value: _selectedCategorie.id == 0 ? null : _selectedCategorie,
                   isExpanded: true,
@@ -179,9 +199,10 @@ class _AddFichePageState extends State<AddFichePage> {
                   isExpanded: true,
                   hint: Text("Etat de sante"),
                   items: statusItem,
-                  onChanged: (valu) => setState((){
-                  _selectedStatus = valu!;
-                  fiche.healthstatus = valu.id!;}),
+                  onChanged: (valu) => setState(() {
+                    _selectedStatus = valu!;
+                    fiche.healthstatus = valu.id!;
+                  }),
                 ),
                 _label("Couleur de l'animal"),
                 TextFormField(
@@ -235,7 +256,7 @@ class _AddFichePageState extends State<AddFichePage> {
                     //verifier si tout les element sont present
                     //on envoi tout à une methode externe qui fera le taff
                     //On redirige vers un success ou Non
-                    RemoteService().postFiche(fiche,context);
+                    RemoteService().postFiche(fiche, context);
                   },
                   icon: Icon(Icons.monitor_heart),
                   label: Text("Je signale"),

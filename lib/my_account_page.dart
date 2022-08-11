@@ -1,5 +1,5 @@
 import 'package:birdhelp/home_page.dart';
-import 'package:birdhelp/mapp_to_add.dart';
+import 'package:birdhelp/add_animal_on_map.dart';
 import 'package:birdhelp/setting.dart';
 import 'package:birdhelp/widget.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';

@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'acceuil_page.dart';
-import 'mapp_to_add.dart';
+import 'add_animal_on_map.dart';
 import 'my_account_page.dart';
 
 class SettingPage extends StatefulWidget {
