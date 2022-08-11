@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 
 import '../acceuil_page.dart';
 import '../models/fiche.dart';
+import '../utils.dart';
 
 class RemoteService {
   var client = http.Client();
@@ -46,7 +47,7 @@ class RemoteService {
         child: CircularProgressIndicator(),
       ),
     );
-
+  try{
     var url = Uri.parse("$apiUrl/fiche");
     var ficheparse = ficheToJson(fiche);
     print(ficheparse);
@@ -63,6 +64,16 @@ class RemoteService {
       );
     } else {
       //add snackbar error
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => const AcceuilPage(),
+        ),
+      );
+      Utils.showSnackBar("Une erreur est survenue, la création de la fiche n'a pas aboutie");
+
     }
+  }catch(e){
+    Utils.showSnackBar(e.toString());
+  }
   }
 }
