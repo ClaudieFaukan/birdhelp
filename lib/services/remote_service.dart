@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:birdhelp/main.dart';
 import 'package:birdhelp/models/categories.dart';
+import 'package:birdhelp/models/coordinates.dart';
 import 'package:birdhelp/models/health_status.dart';
 import 'package:birdhelp/success_add_fiche.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,7 +17,7 @@ import '../utils.dart';
 class RemoteService {
   var client = http.Client();
   final apiUrl =
-      "https://e2f1-2a01-cb06-30c-2200-31a3-4af3-9fdd-9e96.eu.ngrok.io";
+      "https://5111-2a01-cb06-30c-2200-4c81-2d5b-250f-b4e7.eu.ngrok.io";
 
   Future<List<Categories>?> getCategories() async {
     var uri = Uri.parse("$apiUrl/categories");
@@ -74,5 +75,15 @@ class RemoteService {
   }catch(e){
     Utils.showSnackBar(e.toString());
   }
+  }
+
+  Future<List<Coordinate>?> getAllCoordinates() async {
+    var url = Uri.parse("$apiUrl/coordinates");
+    var response = await client.get(url);
+
+    if (response.statusCode == 200) {
+      var jsonStatus = response.body;
+      return coordinateFromJson(jsonStatus);
+    }
   }
 }

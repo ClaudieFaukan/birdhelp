@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:birdhelp/services/remote_service.dart';
 import 'package:birdhelp/widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:birdhelp/add_fiche_page.dart';
@@ -22,12 +23,13 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
   double long = 0.0;
   List<LatLng> tappedPoints = [];
   bool isLoaded = false;
-  Coordinate coordinate = Coordinate(id: 0, longitude: 0.0, lattitude: 0.0);
+  Coordinate coordinate = Coordinate(id: 0, longitude: 0.0, latitude: 0.0);
 
 
   @override
   void initState() {
     super.initState();
+    getAllAnimals();
     getCurrentLocation();
   }
   getCurrentLocation() async {
@@ -38,6 +40,17 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
       long = _locationData.longitude!;
       isLoaded = true;
     });
+  }
+
+  getAllAnimals() async {
+    List<Coordinate> coordinates = (await RemoteService().getAllCoordinates())!;
+    for(var coord in coordinates){
+      double lati =coord.latitude.toDouble();
+      double longi = coord.longitude.toDouble();
+      LatLng latLng = LatLng(longi,lati);
+      tappedPoints.add(latLng);
+    }
+    print(tappedPoints);
   }
 
 

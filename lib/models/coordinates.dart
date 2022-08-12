@@ -4,30 +4,30 @@
 
 import 'dart:convert';
 
-Coordinate coordinateFromJson(String str) => Coordinate.fromJson(json.decode(str));
+List<Coordinate> coordinateFromJson(String str) => List<Coordinate>.from(json.decode(str).map((x) => Coordinate.fromJson(x)));
 
-String coordinateToJson(Coordinate data) => json.encode(data.toJson());
+String coordinateToJson(List<Coordinate> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class Coordinate {
   Coordinate({
     required this.id,
+    required this.latitude,
     required this.longitude,
-    required this.lattitude,
   });
 
   int id;
+  double latitude;
   double longitude;
-  double lattitude;
 
   factory Coordinate.fromJson(Map<String, dynamic> json) => Coordinate(
     id: json["id"],
+    latitude: json["latitude"],
     longitude: json["longitude"],
-    lattitude: json["lattitude"],
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
+    "latitude": latitude,
     "longitude": longitude,
-    "lattitude": lattitude,
   };
 }

@@ -35,7 +35,7 @@ class _AddFichePageState extends State<AddFichePage> {
   List<Categories>? categories = [];
   List<HealthStatus>? status = [];
   bool isLoaded = false;
-  Coordinate coordinate = Coordinate(id: 0, longitude: 0.0, lattitude: 0.0);
+  Coordinate coordinate = Coordinate(id: 0, longitude: 0.0, latitude: 0.0);
 
   List<DropdownMenuItem<Categories>> categorieItem = [];
 
@@ -66,8 +66,8 @@ class _AddFichePageState extends State<AddFichePage> {
       await prefs.setDouble("lat", 0.0);
     } else {
       coordinate.longitude = prefs.getDouble("long")!;
-      coordinate.lattitude = prefs.getDouble("lat")!;
-      fiche.geographicCoordinate = [coordinate.longitude, coordinate.lattitude];
+      coordinate.latitude = prefs.getDouble("lat")!;
+      fiche.geographicCoordinate = [coordinate.longitude, coordinate.latitude];
     }
 
     //couleur

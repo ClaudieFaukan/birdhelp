@@ -33,7 +33,7 @@ class TapToAddPageState extends State<TapToAddPage> {
   double long = 0.0;
   List<LatLng> tappedPoints = [];
   bool isLoaded = false;
-  Coordinate coordinate = Coordinate(id: 0, longitude: 0.0, lattitude: 0.0);
+  Coordinate coordinate = Coordinate(id: 0, longitude: 0.0, latitude: 0.0);
   
 
   @override
@@ -87,9 +87,9 @@ class TapToAddPageState extends State<TapToAddPage> {
                 //verifier si la coordinates nest pas vide
                 //Sinon on initialise la valeur de current location a la place
 
-                if (coordinate.lattitude == 0.0 &&
-                    coordinate.lattitude == 0.0) {
-                  coordinate.lattitude = lat;
+                if (coordinate.latitude == 0.0 &&
+                    coordinate.latitude == 0.0) {
+                  coordinate.latitude = lat;
                   coordinate.longitude = long;
                 }
                 //ajouter long et lat aux preferences
@@ -152,7 +152,7 @@ class TapToAddPageState extends State<TapToAddPage> {
     }
     setState(() {
       coordinate = Coordinate(
-          id: 0, longitude: latlng.longitude, lattitude: latlng.latitude);
+          id: 0, longitude: latlng.longitude, latitude: latlng.latitude);
       tappedPoints.add(latlng);
     });
   }
