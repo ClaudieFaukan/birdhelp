@@ -4,6 +4,7 @@ import 'package:birdhelp/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SuccessAddFiche extends StatefulWidget {
   const SuccessAddFiche({Key? key}) : super(key: key);
@@ -12,7 +13,21 @@ class SuccessAddFiche extends StatefulWidget {
   _SuccessAddFicheState createState() => _SuccessAddFicheState();
 }
 
+
 class _SuccessAddFicheState extends State<SuccessAddFiche> {
+
+  @override
+  void initState() {
+    super.initState();
+    _clearPrefrences();
+  }
+
+  _clearPrefrences()async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(

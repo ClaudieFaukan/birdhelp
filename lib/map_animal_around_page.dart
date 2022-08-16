@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
+import 'package:open_street_map_search_and_pick/open_street_map_search_and_pick.dart';
 import 'package:positioned_tap_detector_2/positioned_tap_detector_2.dart';
 
 class MapAnimalAround extends StatefulWidget {
@@ -22,13 +23,12 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
   double long = 0.0;
   List<LatLng> tappedPoints = [];
   bool isLoaded = false;
-  Coordinate coordinate = Coordinate(id: 0, longitude: 0.0, latitude: 0.0);
 
   @override
   void initState() {
-    super.initState();
     getAllAnimals();
     getCurrentLocation();
+    super.initState();
   }
 
   getCurrentLocation() async {
@@ -44,9 +44,9 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
   getAllAnimals() async {
     List<Coordinate> coordinates = (await RemoteService().getAllCoordinates())!;
     for (var coord in coordinates) {
-      double lati = coord.latitude.toDouble();
-      double longi = coord.longitude.toDouble();
-      LatLng latLng = LatLng(longi, lati);
+      double lati = coord.latitude;
+      double longi = coord.longitude;
+      LatLng latLng = LatLng(lati, longi);
       setState(() {
         tappedPoints.add(latLng);
       });
@@ -55,15 +55,16 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
 
   @override
   Widget build(BuildContext context) {
-    final markers = tappedPoints.map((latlng) {
+
+    final markers = tappedPoints.map((thislatlng) {
       return Marker(
         width: 100,
         height: 100,
-        point: latlng,
+        point: thislatlng,
         builder: (ctx) => Container(
           child: IconButton(
             onPressed: () {
-              _showBottomSheet(context);
+              _showBottomSheet(context, thislatlng);
             },
             icon: const Icon(
               Icons.pin_drop,
@@ -92,8 +93,8 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
               Flexible(
                 child: FlutterMap(
                   options: MapOptions(
-                      center: LatLng(lat, long),
-                      zoom: 13,
+                      center: LatLng(lat,long),
+                      zoom: 17,
                       onTap: _handleTap,
                       onLongPress: _handleLongPress),
                   layers: [
@@ -117,20 +118,24 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
     );
   }
 
-  void _handleTap(TapPosition tapPosition, LatLng latlng) {}
+  void _handleTap(TapPosition tapPosition, LatLng latlng) {
+    setState(() {
+      tappedPoints.add(latlng);
+    });
+  }
 
   void _handleLongPress(TapPosition tapPosition, LatLng latlng) {}
 
-  _showBottomSheet(context) {
+  _showBottomSheet(context, latlng) {
     return showModalBottomSheet(
         context: context,
         builder: (builder) {
           return Container(
-
               color: Colors.white,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
+                  Text(latlng.toString()),
                   Text("Category Animal"),
                   Text("Fiche partager le date a heure"),
                   ListTile(

@@ -171,6 +171,7 @@ class _AddFichePageState extends State<AddFichePage> {
               child: Column(children: [
                 _header(context),
                 _label("Ou l'animal se situe ?"),
+                Text(fiche.geographicCoordinate.toString()),
                 ElevatedButton.icon(
                   onPressed: () {
                     Navigator.of(context).push(
