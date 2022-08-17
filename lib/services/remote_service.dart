@@ -17,7 +17,7 @@ import '../utils.dart';
 class RemoteService {
   var client = http.Client();
   final apiUrl =
-      "https://de9f-2a01-cb06-30c-2200-d08e-1996-1e85-3968.eu.ngrok.io";
+      "https://1a62-2a01-cb06-30c-2200-907b-3361-d0c5-3b59.eu.ngrok.io";
 
   Future<List<Categories>?> getCategories() async {
     var uri = Uri.parse("$apiUrl/categories");

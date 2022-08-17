@@ -91,6 +91,9 @@ class TapToAddPageState extends State<TapToAddPage> {
                     coordinate.latitude == 0.0) {
                   coordinate.latitude = lat;
                   coordinate.longitude = long;
+                }else{
+                  lat = coordinate.latitude;
+                  long= coordinate.longitude;
                 }
                 //ajouter long et lat aux preferences
                 SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -155,6 +158,8 @@ class TapToAddPageState extends State<TapToAddPage> {
           id: 0, longitude: latlng.longitude, latitude: latlng.latitude);
       tappedPoints.add(latlng);
     });
+    print(latlng.toString());
+
   }
 
   void _handleLongPress(TapPosition tapPosition, LatLng latlng) {

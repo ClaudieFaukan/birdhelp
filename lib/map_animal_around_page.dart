@@ -23,12 +23,15 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
   double long = 0.0;
   List<LatLng> tappedPoints = [];
   bool isLoaded = false;
+  List<Marker> markers = [];
+
+
 
   @override
   void initState() {
+    super.initState();
     getAllAnimals();
     getCurrentLocation();
-    super.initState();
   }
 
   getCurrentLocation() async {
@@ -56,15 +59,14 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
   @override
   Widget build(BuildContext context) {
 
-    final markers = tappedPoints.map((thislatlng) {
-      return Marker(
-        width: 100,
-        height: 100,
-        point: thislatlng,
+    tappedPoints.forEach((element) {
+      var marker = Marker(
+        point: LatLng(element.latitude, element.longitude),
         builder: (ctx) => Container(
           child: IconButton(
             onPressed: () {
-              _showBottomSheet(context, thislatlng);
+              _showBottomSheet(
+                  context, LatLng(element.latitude, element.longitude));
             },
             icon: const Icon(
               Icons.pin_drop,
@@ -74,7 +76,10 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
           ),
         ),
       );
-    }).toList();
+      setState(() {
+        markers.add(marker);
+      });
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -84,6 +89,9 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
         padding: const EdgeInsets.all(8),
         child: Visibility(
           visible: isLoaded,
+          replacement: const Center(
+            child: CircularProgressIndicator(),
+          ),
           child: Column(
             children: [
               const Padding(
@@ -92,25 +100,24 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
               ),
               Flexible(
                 child: FlutterMap(
-                  options: MapOptions(
-                      center: LatLng(lat,long),
-                      zoom: 17,
-                      onTap: _handleTap,
-                      onLongPress: _handleLongPress),
                   layers: [
                     TileLayerOptions(
                       urlTemplate:
                           'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                       userAgentPackageName: 'dev.fleaflet.flutter_map.example',
                     ),
-                    MarkerLayerOptions(markers: markers)
+                    MarkerLayerOptions(markers: [
+                      for (int i = 0; i < markers.length; i++) markers[i]
+                    ])
                   ],
+                  options: MapOptions(
+                    center: LatLng(lat, long),
+                    zoom: 17,
+                    onTap: _handleTap,
+                  ),
                 ),
               ),
             ],
-          ),
-          replacement: Center(
-            child: CircularProgressIndicator(),
           ),
         ),
       ),
@@ -119,9 +126,6 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
   }
 
   void _handleTap(TapPosition tapPosition, LatLng latlng) {
-    setState(() {
-      tappedPoints.add(latlng);
-    });
   }
 
   void _handleLongPress(TapPosition tapPosition, LatLng latlng) {}
