@@ -10,16 +10,18 @@ List<Animals> animalsFromJson(String str) => List<Animals>.from(json.decode(str)
 
 String animalsToJson(List<Animals> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
+String animalsToMap(List<Animals> data) => json.encode(List<dynamic>.from(data.map((x) => x.toMap())));
+
 class Animals {
   Animals({
     required this.id,
     required this.color,
-    required this.categorie,
+    this.categorie,
   });
 
   int id;
   String color;
-  Categories categorie;
+  Categories? categorie;
 
   factory Animals.fromJson(Map<String, dynamic> json) => Animals(
     id: json["id"],
@@ -32,4 +34,17 @@ class Animals {
     "color": color,
     "categorie": categorie,
   };
+
+  Map<String, dynamic> toMap() => {
+    "id": id,
+    "color": color,
+    "categorie": categorie,
+  };
+
+
+  factory Animals.fromMap(Map<String, dynamic> json) => Animals(
+    id: json["id"],
+    color: json["color"],
+    categorie: json["categorie"],
+  );
 }

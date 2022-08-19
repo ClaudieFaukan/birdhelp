@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:birdhelp/models/fiche_retour.dart';
 import 'package:birdhelp/services/remote_service.dart';
 import 'package:birdhelp/widget.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -24,6 +25,7 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
   List<LatLng> tappedPoints = [];
   bool isLoaded = false;
   List<Marker> markers = [];
+  List<Coordinate> coordinates = [];
 
 
 
@@ -40,12 +42,13 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
     setState(() {
       lat = _locationData.latitude!;
       long = _locationData.longitude!;
+      addmarkerOnActualPosition(markers, LatLng(lat,long));
       isLoaded = true;
     });
   }
 
   getAllAnimals() async {
-    List<Coordinate> coordinates = (await RemoteService().getAllCoordinates())!;
+     coordinates = (await RemoteService().getAllCoordinates())!;
     for (var coord in coordinates) {
       double lati = coord.latitude;
       double longi = coord.longitude;
@@ -54,6 +57,27 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
         tappedPoints.add(latLng);
       });
     }
+  }
+
+  addmarkerOnActualPosition(List<Marker> list, LatLng latlng){
+    var marker = Marker(
+      point: latlng,
+      builder: (ctx) => Container(
+        child: IconButton(
+          onPressed: () {
+            _showBottomSheet(
+                context, latlng);
+          },
+          icon: const Icon(
+            Icons.circle,
+            color: Colors.blue,
+            size: 20,
+          ),
+        ),
+      ),
+    );
+
+    list.add(marker);
   }
 
   @override
@@ -130,7 +154,18 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
 
   void _handleLongPress(TapPosition tapPosition, LatLng latlng) {}
 
-  _showBottomSheet(context, latlng) {
+  _showBottomSheet(context, LatLng latlng) async {
+    var lat = latlng.latitude;
+    var long = latlng.longitude;
+    var id = 0;
+    coordinates.forEach((element) {
+      if(element.longitude == long && element.latitude == lat){
+        id = element.id;
+      }
+    });
+
+    List<FichesRetour>? fiche = await RemoteService().getFicheById(id);
+
     return showModalBottomSheet(
         context: context,
         builder: (builder) {
@@ -139,9 +174,9 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text(latlng.toString()),
-                  Text("Category Animal"),
-                  Text("Fiche partager le date a heure"),
+                  Text(fiche![0].category!),
+
+                  Text(fiche![0].date.toString()),
                   ListTile(
                     leading: new Icon(Icons.photo),
                     title: new Text('Voir la photo'),
@@ -151,21 +186,21 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
                   ),
                   ListTile(
                     leading: new Icon(Icons.monitor_heart),
-                    title: new Text('Etat de sante'),
+                    title: Text(fiche[0].healthStatus ?? "Pas d'information" ),
                     onTap: () {
                       Navigator.pop(context);
                     },
                   ),
                   ListTile(
                     leading: new Icon(Icons.description),
-                    title: new Text('Description situation'),
+                    title: Text(fiche[0].description ?? "Pas d'information"),
                     onTap: () {
                       Navigator.pop(context);
                     },
                   ),
                   ListTile(
                     leading: new Icon(FontAwesomeIcons.hireAHelper),
-                    title: new Text("Helper "),
+                    title: new Text("Helper : ${fiche[0].helper?.email.toString()}"),
                     onTap: () {
                       Navigator.pop(context);
                     },
