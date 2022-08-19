@@ -6,6 +6,7 @@ import 'package:birdhelp/models/fiche.dart';
 import 'package:birdhelp/models/health_status.dart';
 import 'package:birdhelp/services/remote_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -95,7 +96,7 @@ class _AddFichePageState extends State<AddFichePage> {
   final imagePicker = ImagePicker();
 
   Future pickCamera() async {
-    final image = await imagePicker.pickImage(source: ImageSource.camera);
+    final image = await imagePicker.pickImage(source: ImageSource.camera,maxWidth: 512,maxHeight: 512,imageQuality: 75);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString("image", image!.path.toString());
     setState(() {
@@ -105,11 +106,13 @@ class _AddFichePageState extends State<AddFichePage> {
 
   Future pickGallery() async {
     try {
-      final _image = await imagePicker.pickImage(source: ImageSource.gallery);
+      final _image = await imagePicker.pickImage(source: ImageSource.gallery,maxWidth: 512,maxHeight: 512,imageQuality: 75);
       if (_image == null) return;
 
       final imageTemporary = File(_image.path);
       setState(() => this._image = imageTemporary);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString("image", _image!.path.toString());
     } on PlatformException catch (e) {
       print('failed to pick image $e');
     }
@@ -253,10 +256,22 @@ class _AddFichePageState extends State<AddFichePage> {
                   },
                 ),
                 ElevatedButton.icon(
-                  onPressed: () {
+                  onPressed: () async {
                     //verifier si tout les element sont present
                     //on envoi tout à une methode externe qui fera le taff
                     //On redirige vers un success ou Non
+
+                    //Si image n'est pas vide alors on ajoute l'image dans la fiche
+                    //Sinon image par defaut
+                    if(_image!.path != ""){
+                      Reference ref = FirebaseStorage.instance.ref().child("animal.jpg");
+                      await ref.putFile(_image!);
+                      await ref.getDownloadURL().then((value) =>
+                      fiche.photo = value
+                      );
+                    }else{
+                      fiche.photo = "https://cdn.dribbble.com/users/1247449/screenshots/3984840/media/dd1c0193e614422d6c9655482fe4a999.png";
+                    }
                     RemoteService().postFiche(fiche, context);
                   },
                   icon: Icon(Icons.monitor_heart),

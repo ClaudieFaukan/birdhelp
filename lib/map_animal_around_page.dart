@@ -187,7 +187,14 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
                     leading: new Icon(Icons.photo),
                     title: new Text('Voir la photo'),
                     onTap: () {
-                      Navigator.pop(context);
+                      showModalBottomSheet(context: context,builder: (builder){
+                        return Container(
+                          color: Colors.white,
+                          child: Image.network(
+                            fiche.photo!
+                          ),
+                        );
+                      });
                     },
                   ),
                   ListTile(
