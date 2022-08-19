@@ -4,7 +4,10 @@ import 'package:birdhelp/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class SuccessAddFiche extends StatefulWidget {
   const SuccessAddFiche({Key? key}) : super(key: key);
@@ -13,8 +16,12 @@ class SuccessAddFiche extends StatefulWidget {
   _SuccessAddFicheState createState() => _SuccessAddFicheState();
 }
 
+enum SocialMedia {facebook,instagram,whatsapp,mail}
 
 class _SuccessAddFicheState extends State<SuccessAddFiche> {
+
+
+
 
   @override
   void initState() {
@@ -68,18 +75,22 @@ class _SuccessAddFicheState extends State<SuccessAddFiche> {
       children: [
         CustomWidgets.socialButtonCircle(
             facebookColor, FontAwesomeIcons.facebookF, iconColor: Colors.white,
-            onTap: () {
-              Fluttertoast.showToast(msg: 'I am circle facebook');
+            onTap: () async {
+
             }),
         CustomWidgets.socialButtonCircle(instaColor, FontAwesomeIcons.instagram,
-            iconColor: Colors.white, onTap: () async {}),
-        CustomWidgets.socialButtonCircle(whatsappColor, FontAwesomeIcons.whatsapp,
-            iconColor: Colors.white, onTap: () {
-              Fluttertoast.showToast(msg: 'I am circle whatsapp');
+            iconColor: Colors.white, onTap: () async {
+
             }),
-        CustomWidgets.socialButtonCircle(Colors.green, FontAwesomeIcons.message,
+        CustomWidgets.socialButtonCircle(whatsappColor, FontAwesomeIcons.whatsapp,
+            iconColor: Colors.white, onTap: (
+                ) {
+
+
+            }),
+        CustomWidgets.socialButtonCircle(googleColor, FontAwesomeIcons.google,
             iconColor: Colors.white, onTap: () {
-              Fluttertoast.showToast(msg: 'I am circle message');
+
             }),
       ],
     );

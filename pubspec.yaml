@@ -51,6 +51,8 @@ dependencies:
   flutter_launcher_icons: ^0.10.0
   modal_bottom_sheet: ^2.1.0
   firebase_storage: ^10.3.6
+  share_plus: ^4.0.10+1
+  url_launcher: ^6.1.5
 
 
 dev_dependencies:

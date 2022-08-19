@@ -1,6 +1,9 @@
 import 'package:birdhelp/home_page.dart';
 import 'package:birdhelp/add_animal_on_map.dart';
+import 'package:birdhelp/models/fiche_retour.dart';
+import 'package:birdhelp/services/remote_service.dart';
 import 'package:birdhelp/setting.dart';
+import 'package:birdhelp/utils.dart';
 import 'package:birdhelp/widget.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,7 +22,25 @@ class MyAccountPage extends StatefulWidget {
 }
 
 class _MyAccountPageState extends State<MyAccountPage> {
+
+  List<FichesRetour> fichesRetour = [];
+
   final user = FirebaseAuth.instance.currentUser!;
+
+  @override void initState() {
+    super.initState();
+    getAllFichesUser(user.email!);
+  }
+
+
+  Future getAllFichesUser(String email) async {
+
+      var fiches = await RemoteService().getAllFichesByUserMail(email);
+      fiches?.forEach((element) {
+        fichesRetour.add(element);
+      });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +52,15 @@ class _MyAccountPageState extends State<MyAccountPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text("Page mon compte connexion succesfull"),
-                  Text("${user}"),
+                  Text("Mes signalements"),
+                Container(child: Row(
+                  children: [
+                    CircleAvatar(child: Image.network(fichesRetour[0].photo!),backgroundColor: Colors.white,),
+                    Text(fichesRetour[0].category!),
+                    Text(" Date: ${fichesRetour[0].date}"),
+                  ],
+                ),
+            ),
                   _signOut(context),
                 ],
               ),

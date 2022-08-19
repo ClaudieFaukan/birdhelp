@@ -15,15 +15,15 @@ String helperToJson(List<Helper> data) => json.encode(List<dynamic>.from(data.ma
 class Helper {
   Helper({
     required this.id,
-    required this.firstName,
-    required this.lastName,
-    required this.email,
+     this.firstName = "anonyme",
+     this.lastName = "anonyme",
+     this.email = "anonyme",
   });
 
   int id;
-  String firstName;
-  String lastName;
-  String email;
+  String? firstName;
+  String? lastName;
+  String? email;
 
   factory Helper.fromMap(Map<String, dynamic> json) => Helper(
     id: json["id"],

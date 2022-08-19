@@ -94,6 +94,7 @@ class RemoteService {
     if (response.statusCode == 200){
       var json = response.body;
       json = "["+json+"]";
+      print(json);
       List<FichesRetour>? encode = fichesRetourFromJson(json);
       return encode;
     }
@@ -104,6 +105,20 @@ class RemoteService {
     var response = await client.get(url);
     if (response.statusCode == 200){
       var json = response.body;
+      List<FichesRetour>? encode = fichesRetourFromJson(json);
+      return encode;
+    }
+  }
+
+  Future<List<FichesRetour>?> getAllFichesByUserMail(String mail) async {
+
+    var url = Uri.parse("$apiUrl/user/fiches/$mail");
+    var response = await client.get(url);
+
+    if (response.statusCode == 200){
+
+      var json = response.body;
+      json = json;
       List<FichesRetour>? encode = fichesRetourFromJson(json);
       return encode;
     }

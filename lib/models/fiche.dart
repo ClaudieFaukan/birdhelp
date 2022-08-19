@@ -4,13 +4,15 @@
 
 import 'dart:convert';
 
+import 'package:birdhelp/models/helper.dart';
+
 Fiche ficheFromJson(String str) => Fiche.fromJson(json.decode(str));
 
 String ficheToJson(Fiche data) => json.encode(data.toJson());
 
 class Fiche {
   Fiche({
-    required this.helper,
+    this.helper,
     required this.animal,
     required this.geographicCoordinate,
     required this.date,
@@ -21,7 +23,7 @@ class Fiche {
     required this.color,
   });
 
-  String? helper;
+  Helper? helper;
   int? animal;
   List<double> geographicCoordinate;
   DateTime? date;
@@ -32,7 +34,7 @@ class Fiche {
   String? color;
 
   factory Fiche.fromJson(Map<String, dynamic> json) => Fiche(
-    helper: json["helper"],
+    helper: Helper.fromJson(json["helper"]),
     animal: json["Animal"],
     geographicCoordinate: List<double>.from(json["geographicCoordinate"].map((x) => x)),
     date: DateTime.parse(json["date"]),
@@ -44,7 +46,7 @@ class Fiche {
   );
 
   Map<String, dynamic> toJson() => {
-    "helper": helper,
+    "helper": helper?.toJson(),
     "Animal": animal,
     "geographicCoordinate": List<dynamic>.from(geographicCoordinate.map((x) => x)),
     "date": date?.toIso8601String(),

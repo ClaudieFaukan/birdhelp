@@ -4,6 +4,7 @@ import 'package:birdhelp/models/categories.dart';
 import 'package:birdhelp/models/coordinates.dart';
 import 'package:birdhelp/models/fiche.dart';
 import 'package:birdhelp/models/health_status.dart';
+import 'package:birdhelp/models/helper.dart';
 import 'package:birdhelp/services/remote_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -22,8 +23,16 @@ class AddFichePage extends StatefulWidget {
 }
 
 class _AddFichePageState extends State<AddFichePage> {
+  final user = FirebaseAuth.instance.currentUser;
+  Helper helper = Helper(id: 0, firstName: "", lastName: "", email: "");
+
+  Categories _selectedCategorie = Categories(id: 0, name: "Categorie Animal");
+  HealthStatus _selectedStatus = HealthStatus(id: 0, status: "Etat de Santé");
+  List<Categories>? categories = [];
+  List<HealthStatus>? status = [];
+  bool isLoaded = false;
+  Coordinate coordinate = Coordinate(id: 0, longitude: 0.0, latitude: 0.0);
   Fiche fiche = Fiche(
-      helper: "0",
       animal: 0,
       geographicCoordinate: [0.0],
       date: DateTime.now(),
@@ -31,12 +40,6 @@ class _AddFichePageState extends State<AddFichePage> {
       description: "",
       category: 0,
       color: "");
-  Categories _selectedCategorie = Categories(id: 0, name: "Categorie Animal");
-  HealthStatus _selectedStatus = HealthStatus(id: 0, status: "Etat de Santé");
-  List<Categories>? categories = [];
-  List<HealthStatus>? status = [];
-  bool isLoaded = false;
-  Coordinate coordinate = Coordinate(id: 0, longitude: 0.0, latitude: 0.0);
 
   List<DropdownMenuItem<Categories>> categorieItem = [];
 
@@ -46,7 +49,7 @@ class _AddFichePageState extends State<AddFichePage> {
   final imageController = TextEditingController();
   final descriptionController = TextEditingController();
 
-  final user = FirebaseAuth.instance.currentUser;
+
 
   @override
   void initState() {
@@ -54,7 +57,11 @@ class _AddFichePageState extends State<AddFichePage> {
     getCategoriesData();
     getHealthStatus();
     getPreferences();
-    fiche.helper = user?.uid;
+    helper.email = user?.email;
+    helper.firstName = user?.displayName;
+    helper.lastName = user?.displayName;
+
+    fiche.helper = helper;
   }
 
   getPreferences() async {
