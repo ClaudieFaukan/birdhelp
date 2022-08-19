@@ -99,4 +99,14 @@ class RemoteService {
     }
   }
 
+  Future<List<FichesRetour>?> getAllFichesRetour() async {
+    var url = Uri.parse("$apiUrl/fiches");
+    var response = await client.get(url);
+    if (response.statusCode == 200){
+      var json = response.body;
+      List<FichesRetour>? encode = fichesRetourFromJson(json);
+      return encode;
+    }
+  }
+
 }

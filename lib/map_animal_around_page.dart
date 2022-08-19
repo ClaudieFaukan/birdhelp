@@ -26,13 +26,15 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
   bool isLoaded = false;
   List<Marker> markers = [];
   List<Coordinate> coordinates = [];
+  List<FichesRetour> fichesRetour = [];
 
 
 
   @override
   void initState() {
     super.initState();
-    getAllAnimals();
+    getAllFichesRetour();
+    getAllCoordinate();
     getCurrentLocation();
   }
 
@@ -47,7 +49,7 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
     });
   }
 
-  getAllAnimals() async {
+  getAllCoordinate() async {
      coordinates = (await RemoteService().getAllCoordinates())!;
     for (var coord in coordinates) {
       double lati = coord.latitude;
@@ -58,21 +60,20 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
       });
     }
   }
+  getAllFichesRetour()async{
+    fichesRetour = (await RemoteService().getAllFichesRetour())!;
+  }
 
   addmarkerOnActualPosition(List<Marker> list, LatLng latlng){
     var marker = Marker(
       point: latlng,
       builder: (ctx) => Container(
         child: IconButton(
-          onPressed: () {
-            _showBottomSheet(
-                context, latlng);
-          },
           icon: const Icon(
             Icons.circle,
             color: Colors.blue,
             size: 20,
-          ),
+          ), onPressed: () {  },
         ),
       ),
     );
@@ -89,8 +90,11 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
         builder: (ctx) => Container(
           child: IconButton(
             onPressed: () {
-              _showBottomSheet(
-                  context, LatLng(element.latitude, element.longitude));
+              fichesRetour.forEach((item) {
+                if(item.coordinates?.latitude == element.latitude && item.coordinates?.longitude == element.longitude){
+                  _showBottomSheet(context, item);
+                }
+              });
             },
             icon: const Icon(
               Icons.pin_drop,
@@ -154,17 +158,7 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
 
   void _handleLongPress(TapPosition tapPosition, LatLng latlng) {}
 
-  _showBottomSheet(context, LatLng latlng) async {
-    var lat = latlng.latitude;
-    var long = latlng.longitude;
-    var id = 0;
-    coordinates.forEach((element) {
-      if(element.longitude == long && element.latitude == lat){
-        id = element.id;
-      }
-    });
-
-    List<FichesRetour>? fiche = await RemoteService().getFicheById(id);
+  _showBottomSheet(context, FichesRetour fiche) async {
 
     return showModalBottomSheet(
         context: context,
@@ -174,9 +168,9 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text(fiche![0].category!),
+                  Text(fiche.category!),
 
-                  Text(fiche![0].date.toString()),
+                  Text(fiche.date.toString()),
                   ListTile(
                     leading: new Icon(Icons.photo),
                     title: new Text('Voir la photo'),
@@ -186,21 +180,21 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
                   ),
                   ListTile(
                     leading: new Icon(Icons.monitor_heart),
-                    title: Text(fiche[0].healthStatus ?? "Pas d'information" ),
+                    title: Text(fiche.healthStatus ?? "Pas d'information" ),
                     onTap: () {
                       Navigator.pop(context);
                     },
                   ),
                   ListTile(
                     leading: new Icon(Icons.description),
-                    title: Text(fiche[0].description ?? "Pas d'information"),
+                    title: Text(fiche.description ?? "Pas d'information"),
                     onTap: () {
                       Navigator.pop(context);
                     },
                   ),
                   ListTile(
                     leading: new Icon(FontAwesomeIcons.hireAHelper),
-                    title: new Text("Helper : ${fiche[0].helper?.email.toString()}"),
+                    title: new Text("Helper : ${fiche.helper?.email.toString()}"),
                     onTap: () {
                       Navigator.pop(context);
                     },
