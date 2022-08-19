@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:birdhelp/models/fiche_retour.dart';
 import 'package:birdhelp/services/remote_service.dart';
+import 'package:birdhelp/utils.dart';
 import 'package:birdhelp/widget.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -27,7 +28,6 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
   List<Marker> markers = [];
   List<Coordinate> coordinates = [];
   List<FichesRetour> fichesRetour = [];
-
 
 
   @override
@@ -85,21 +85,33 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
   Widget build(BuildContext context) {
 
     tappedPoints.forEach((element) {
+
+      IconData icon = FontAwesomeIcons.mapPin;
+      FichesRetour fiche = FichesRetour();
+      Color color = Colors.white;
+
+      fichesRetour.forEach((item) {
+        if(item.coordinates?.latitude == element.latitude && item.coordinates?.longitude == element.longitude){
+          setState(() {
+            icon = Utils.animalIcon(item.category!);
+            color = Utils.iconColor(item.healthStatus!);
+            fiche = item;
+            return;
+          });
+        }
+      });
+
       var marker = Marker(
         point: LatLng(element.latitude, element.longitude),
         builder: (ctx) => Container(
           child: IconButton(
             onPressed: () {
-              fichesRetour.forEach((item) {
-                if(item.coordinates?.latitude == element.latitude && item.coordinates?.longitude == element.longitude){
-                  _showBottomSheet(context, item);
-                }
-              });
+              _showBottomSheet(context, fiche);
             },
-            icon: const Icon(
-              Icons.pin_drop,
-              color: Colors.red,
-              size: 40,
+            icon: Icon(
+               icon,
+              color: color,
+              size: 20,
             ),
           ),
         ),
