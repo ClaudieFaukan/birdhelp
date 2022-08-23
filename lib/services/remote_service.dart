@@ -85,6 +85,8 @@ class RemoteService {
     if (response.statusCode == 200) {
       var jsonStatus = response.body;
       return coordinateFromJson(jsonStatus);
+    }else {
+      throw Exception('Unexpected error occured!');
     }
   }
 
@@ -97,6 +99,8 @@ class RemoteService {
       print(json);
       List<FichesRetour>? encode = fichesRetourFromJson(json);
       return encode;
+    }else {
+      throw Exception('Unexpected error occured!');
     }
   }
 
@@ -107,10 +111,12 @@ class RemoteService {
       var json = response.body;
       List<FichesRetour>? encode = fichesRetourFromJson(json);
       return encode;
+    }else {
+      throw Exception('Unexpected error occured!');
     }
   }
 
-  Future<List<FichesRetour>?> getAllFichesByUserMail(String mail) async {
+  Future<List<FichesRetour>> getAllFichesByUserMail(String mail) async {
 
     var url = Uri.parse("$apiUrl/user/fiches/$mail");
     var response = await client.get(url);
@@ -119,8 +125,10 @@ class RemoteService {
 
       var json = response.body;
       json = json;
-      List<FichesRetour>? encode = fichesRetourFromJson(json);
+      List<FichesRetour> encode = fichesRetourFromJson(json);
       return encode;
+    }else {
+      throw Exception('Unexpected error occured!');
     }
   }
 

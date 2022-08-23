@@ -25,15 +25,8 @@ class MyAccountPage extends StatefulWidget {
 }
 
 class _MyAccountPageState extends State<MyAccountPage> {
-  List<FichesRetour> items = [];
-  List<FichesRetour> fichesRetour = [];
+  List<FichesRetour> fichesRetour = [] ;
   bool isLoaded = false;
-  List<FichesRetour> test = [
-  new FichesRetour(id: 0,animal: new Animals(id: 0, color: "red"), healthStatus: "ok",category: "chat",date: DateTime(2022),coordinates: new Coordinate(id: 0, latitude: 0.0, longitude: 0.0),description: "fameuse descriptio,", helper: new Helper(id: 0),photo: "https://cdn.pixabay.com/photo/2021/05/25/21/29/pampas-grass-6283622_960_720.jpg" ),
-  new FichesRetour(id: 1,animal: new Animals(id: 0, color: "bleu"), healthStatus: "pas ok",category: "chien",date: DateTime(2022),coordinates: new Coordinate(id: 0, latitude: 0.0, longitude: 0.0),description: "fameuse description", helper: new Helper(id: 0),photo: "https://cdn.pixabay.com/photo/2021/05/25/21/29/pampas-grass-6283622_960_720.jpg" ),
-  new FichesRetour(id: 2,animal: new Animals(id: 0, color: "jaube"), healthStatus: "dead",category: "singe",date: DateTime(2022),coordinates: new Coordinate(id: 0, latitude: 0.0, longitude: 0.0),description: "fameuse description ameliorer", helper: new Helper(id: 0),photo: "https://cdn.pixabay.com/photo/2021/05/25/21/29/pampas-grass-6283622_960_720.jpg" ),
-  ];
-
   final user = FirebaseAuth.instance.currentUser!;
 
   @override
@@ -42,16 +35,18 @@ class _MyAccountPageState extends State<MyAccountPage> {
     getAllFichesUser(user.email!);
   }
 
-  Future getAllFichesUser(String email) async {
+  getAllFichesUser(String email) async {
     var fiches = await RemoteService().getAllFichesByUserMail(email);
-    fiches?.forEach((element) {
-      setState(() {
-        fichesRetour.add(element);
+    if(fiches != null && fiches.isNotEmpty){
+      fiches.forEach((element) {
+        setState(() {
+          fichesRetour.add(element);
+        });
       });
-    });
-    setState(() {
-      isLoaded = true;
-    });
+      setState(() {
+        isLoaded = true;
+      });
+    }
   }
 
   @override
@@ -77,14 +72,14 @@ class _MyAccountPageState extends State<MyAccountPage> {
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
-                              final item = test[index];
+                              final item = fichesRetour[index];
                               return buildListTile(item);
                             },
                             separatorBuilder: (context, index) => Divider(),
-                            itemCount: test.length),
+                            itemCount: fichesRetour.length),
+                        ),
                       ),
-                    )
-                  ),
+                    ),
                   _signOut(context),
                 ],
               ),
