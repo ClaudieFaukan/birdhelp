@@ -12,7 +12,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../acceuil_page.dart';
+import '../models/animals.dart';
 import '../models/fiche.dart';
+import '../models/helper.dart';
 import '../utils.dart';
 
 class RemoteService {
@@ -127,7 +129,11 @@ class RemoteService {
       json = json;
       List<FichesRetour> encode = fichesRetourFromJson(json);
       return encode;
-    }else {
+    }else if (response.statusCode == 403){
+      return [new FichesRetour(id: 0,helper: new Helper(id: 0),animal: new Animals(id: 0, color: ""),healthStatus: "",category: "Pas des signalement pour l'instant",
+          date: new DateTime.now(), description: "Continué à regarder autour de vous, un animal à peut être besoin d'être signaler", coordinates: new Coordinate(id: 0, latitude:0.0, longitude:0.0))];
+    }
+    else {
       throw Exception('Unexpected error occured!');
     }
   }

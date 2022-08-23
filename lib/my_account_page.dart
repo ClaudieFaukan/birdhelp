@@ -43,10 +43,10 @@ class _MyAccountPageState extends State<MyAccountPage> {
           fichesRetour.add(element);
         });
       });
-      setState(() {
-        isLoaded = true;
-      });
     }
+    setState(() {
+      isLoaded = true;
+    });
   }
 
   @override
@@ -89,69 +89,69 @@ class _MyAccountPageState extends State<MyAccountPage> {
     );
   }
 
-  Widget buildListTile(FichesRetour item) =>
-      Slidable(
-        // Specify a key if the Slidable is dismissible.
-        key: const ValueKey(0),
+  Widget buildListTile(FichesRetour item){
+    return Slidable(
+      // Specify a key if the Slidable is dismissible.
+      key: const ValueKey(0),
 
-        // The start action pane is the one at the left or the top side.
-        startActionPane: ActionPane(
-          // A motion is a widget used to control how the pane animates.
-          motion: const ScrollMotion(),
+      // The start action pane is the one at the left or the top side.
+      startActionPane: ActionPane(
+        // A motion is a widget used to control how the pane animates.
+        motion: const ScrollMotion(),
 
-          // A pane can dismiss the Slidable.
-          dismissible: DismissiblePane(onDismissed: () {}),
+        // A pane can dismiss the Slidable.
+        dismissible: DismissiblePane(onDismissed: () {}),
 
-          // All actions are defined in the children parameter.
-          children:  [
-            // A SlidableAction can have an icon and/or a label.
-            SlidableAction(
-              onPressed: _doNothing,
-              backgroundColor: Color(0xFFFE4A49),
-              foregroundColor: Colors.white,
-              icon: Icons.delete,
-              label: 'Delete',
-            ),
-            SlidableAction(
-              onPressed: _doNothing,
-              backgroundColor: Color(0xFF21B7CA),
-              foregroundColor: Colors.white,
-              icon: Icons.share,
-              label: 'Share',
-            ),
-          ],
-        ),
+        // All actions are defined in the children parameter.
+        children:  [
+          // A SlidableAction can have an icon and/or a label.
+          SlidableAction(
+            onPressed: _doNothing,
+            backgroundColor: Color(0xFFFE4A49),
+            foregroundColor: Colors.white,
+            icon: Icons.delete,
+            label: 'Delete',
+          ),
+          SlidableAction(
+            onPressed: _doNothing,
+            backgroundColor: Color(0xFF21B7CA),
+            foregroundColor: Colors.white,
+            icon: Icons.share,
+            label: 'Share',
+          ),
+        ],
+      ),
 
-        // The end action pane is the one at the right or the bottom side.
-        endActionPane:  ActionPane(
-          motion: ScrollMotion(),
-          children: [
-            SlidableAction(
-              // An action can be bigger than the others.
-              flex: 2,
-              onPressed: _doNothing,
-              backgroundColor: Color(0xFF7BC043),
-              foregroundColor: Colors.white,
-              icon: Icons.archive,
-              label: 'Archive',
-            ),
-            SlidableAction(
-              backgroundColor: Color(0xFF0392CF),
-              foregroundColor: Colors.white,
-              icon: Icons.save,
-              label: 'Save', onPressed: _doNothing,
-            ),
-          ],
-        ),
+      // The end action pane is the one at the right or the bottom side.
+      endActionPane:  ActionPane(
+        motion: ScrollMotion(),
+        children: [
+          SlidableAction(
+            // An action can be bigger than the others.
+            flex: 2,
+            onPressed: _doNothing,
+            backgroundColor: Color(0xFF7BC043),
+            foregroundColor: Colors.white,
+            icon: Icons.archive,
+            label: 'Archive',
+          ),
+          SlidableAction(
+            backgroundColor: Color(0xFF0392CF),
+            foregroundColor: Colors.white,
+            icon: Icons.save,
+            label: 'Save', onPressed: _doNothing,
+          ),
+        ],
+      ),
 
-        child: ListTile(
+      child: ListTile(
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 16,
         ),
         leading: CircleAvatar(
           radius: 28,
-          backgroundImage: NetworkImage(item.photo!),
+          backgroundImage: NetworkImage(item.photo??"https://p7.hiclipart.com/preview/965/769/114/pokemon-go-pikachu-squirtle-charmander-pokemon-png.jpg"),
         ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,6 +165,9 @@ class _MyAccountPageState extends State<MyAccountPage> {
           ],
         ),
       ),);
+  }
+
+
 
 void _doNothing(BuildContext context){
   print("do nothing");
