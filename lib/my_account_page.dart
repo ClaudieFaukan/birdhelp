@@ -1,6 +1,9 @@
 import 'package:birdhelp/home_page.dart';
 import 'package:birdhelp/add_animal_on_map.dart';
+import 'package:birdhelp/models/animals.dart';
+import 'package:birdhelp/models/coordinates.dart';
 import 'package:birdhelp/models/fiche_retour.dart';
+import 'package:birdhelp/models/helper.dart';
 import 'package:birdhelp/services/remote_service.dart';
 import 'package:birdhelp/setting.dart';
 import 'package:birdhelp/utils.dart';
@@ -8,11 +11,11 @@ import 'package:birdhelp/widget.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'acceuil_page.dart';
 import 'google_sign_in.dart';
-
 
 class MyAccountPage extends StatefulWidget {
   const MyAccountPage({Key? key}) : super(key: key);
@@ -22,25 +25,34 @@ class MyAccountPage extends StatefulWidget {
 }
 
 class _MyAccountPageState extends State<MyAccountPage> {
-
+  List<FichesRetour> items = [];
   List<FichesRetour> fichesRetour = [];
+  bool isLoaded = false;
+  List<FichesRetour> test = [
+  new FichesRetour(id: 0,animal: new Animals(id: 0, color: "red"), healthStatus: "ok",category: "chat",date: DateTime(2022),coordinates: new Coordinate(id: 0, latitude: 0.0, longitude: 0.0),description: "fameuse descriptio,", helper: new Helper(id: 0),photo: "https://cdn.pixabay.com/photo/2021/05/25/21/29/pampas-grass-6283622_960_720.jpg" ),
+  new FichesRetour(id: 1,animal: new Animals(id: 0, color: "bleu"), healthStatus: "pas ok",category: "chien",date: DateTime(2022),coordinates: new Coordinate(id: 0, latitude: 0.0, longitude: 0.0),description: "fameuse description", helper: new Helper(id: 0),photo: "https://cdn.pixabay.com/photo/2021/05/25/21/29/pampas-grass-6283622_960_720.jpg" ),
+  new FichesRetour(id: 2,animal: new Animals(id: 0, color: "jaube"), healthStatus: "dead",category: "singe",date: DateTime(2022),coordinates: new Coordinate(id: 0, latitude: 0.0, longitude: 0.0),description: "fameuse description ameliorer", helper: new Helper(id: 0),photo: "https://cdn.pixabay.com/photo/2021/05/25/21/29/pampas-grass-6283622_960_720.jpg" ),
+  ];
 
   final user = FirebaseAuth.instance.currentUser!;
 
-  @override void initState() {
+  @override
+  void initState() {
     super.initState();
     getAllFichesUser(user.email!);
   }
 
-
   Future getAllFichesUser(String email) async {
-
-      var fiches = await RemoteService().getAllFichesByUserMail(email);
-      fiches?.forEach((element) {
+    var fiches = await RemoteService().getAllFichesByUserMail(email);
+    fiches?.forEach((element) {
+      setState(() {
         fichesRetour.add(element);
       });
+    });
+    setState(() {
+      isLoaded = true;
+    });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -48,19 +60,31 @@ class _MyAccountPageState extends State<MyAccountPage> {
       child: Scaffold(
           body: SingleChildScrollView(
             child: Container(
-              margin: EdgeInsets.all(24),
+
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Text("Mes signalements"),
-                Container(child: Row(
-                  children: [
-                    CircleAvatar(child: Image.network(fichesRetour[0].photo!),backgroundColor: Colors.white,),
-                    Text(fichesRetour[0].category!),
-                    Text(" Date: ${fichesRetour[0].date}"),
-                  ],
-                ),
-            ),
+                  Container(
+                    child:
+                    Visibility(
+                      visible: isLoaded,
+                      replacement: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                      child: Container(
+                        child: ListView.separated(
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              final item = test[index];
+                              return buildListTile(item);
+                            },
+                            separatorBuilder: (context, index) => Divider(),
+                            itemCount: test.length),
+                      ),
+                    )
+                  ),
                   _signOut(context),
                 ],
               ),
@@ -70,6 +94,86 @@ class _MyAccountPageState extends State<MyAccountPage> {
     );
   }
 
+  Widget buildListTile(FichesRetour item) =>
+      Slidable(
+        // Specify a key if the Slidable is dismissible.
+        key: const ValueKey(0),
+
+        // The start action pane is the one at the left or the top side.
+        startActionPane: ActionPane(
+          // A motion is a widget used to control how the pane animates.
+          motion: const ScrollMotion(),
+
+          // A pane can dismiss the Slidable.
+          dismissible: DismissiblePane(onDismissed: () {}),
+
+          // All actions are defined in the children parameter.
+          children:  [
+            // A SlidableAction can have an icon and/or a label.
+            SlidableAction(
+              onPressed: _doNothing,
+              backgroundColor: Color(0xFFFE4A49),
+              foregroundColor: Colors.white,
+              icon: Icons.delete,
+              label: 'Delete',
+            ),
+            SlidableAction(
+              onPressed: _doNothing,
+              backgroundColor: Color(0xFF21B7CA),
+              foregroundColor: Colors.white,
+              icon: Icons.share,
+              label: 'Share',
+            ),
+          ],
+        ),
+
+        // The end action pane is the one at the right or the bottom side.
+        endActionPane:  ActionPane(
+          motion: ScrollMotion(),
+          children: [
+            SlidableAction(
+              // An action can be bigger than the others.
+              flex: 2,
+              onPressed: _doNothing,
+              backgroundColor: Color(0xFF7BC043),
+              foregroundColor: Colors.white,
+              icon: Icons.archive,
+              label: 'Archive',
+            ),
+            SlidableAction(
+              backgroundColor: Color(0xFF0392CF),
+              foregroundColor: Colors.white,
+              icon: Icons.save,
+              label: 'Save', onPressed: _doNothing,
+            ),
+          ],
+        ),
+
+        child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
+        leading: CircleAvatar(
+          radius: 28,
+          backgroundImage: NetworkImage(item.photo!),
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              item.category!,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            Text(item.description!)
+          ],
+        ),
+      ),);
+
+void _doNothing(BuildContext context){
+  print("do nothing");
+}
   _signOut(context) {
     return Column(
       children: [
@@ -83,12 +187,10 @@ class _MyAccountPageState extends State<MyAccountPage> {
             style: TextStyle(fontSize: 24),
           ),
           onPressed: () async {
-
-              FirebaseAuth.instance.signOut();
-              try{
-                await GoogleSignInProvider().logout();
-              }catch (e)
-            {
+            FirebaseAuth.instance.signOut();
+            try {
+              await GoogleSignInProvider().logout();
+            } catch (e) {
               print(e);
             }
 
@@ -99,7 +201,6 @@ class _MyAccountPageState extends State<MyAccountPage> {
                 ),
               );
             });
-
           },
         )
       ],
