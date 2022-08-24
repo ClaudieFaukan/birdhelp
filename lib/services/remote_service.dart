@@ -160,4 +160,21 @@ class RemoteService {
     }
   }
 
+  Future<void> deleteFicheById(int id, String email) async{
+    var jsonMail = {"email":email};
+    var json = jsonEncode(jsonMail);
+    var url = Uri.parse("$apiUrl/user/delete/fiche/${id}");
+    var response = await client.post(url,headers: {HttpHeaders.contentTypeHeader: "application/json"},
+        body: json);
+    if (response.statusCode == 200){
+      return ;
+    }else if (response.statusCode == 204){
+      print("something wrong");
+    }
+    else {
+      throw Exception('Unexpected error occured!');
+    }
+  }
+
+
 }

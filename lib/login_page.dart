@@ -161,7 +161,7 @@ class _LoginPageState extends State<LoginPage> {
         CustomWidgets.socialButtonCircle(
             facebookColor, FontAwesomeIcons.facebookF, iconColor: Colors.white,
             onTap: () {
-          Fluttertoast.showToast(msg: 'I am circle facebook');
+              Fluttertoast.showToast(msg: 'Développement en cours');
         }),
         CustomWidgets.socialButtonCircle(googleColor, FontAwesomeIcons.google,
             iconColor: Colors.white, onTap: () async {
@@ -182,7 +182,7 @@ class _LoginPageState extends State<LoginPage> {
         }),
         CustomWidgets.socialButtonCircle(twitterColor, FontAwesomeIcons.twitter,
             iconColor: Colors.white, onTap: () {
-          Fluttertoast.showToast(msg: 'I am circle whatsapp');
+              Fluttertoast.showToast(msg: 'Développement en cours');
         }),
       ],
     );

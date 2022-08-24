@@ -3,6 +3,7 @@ import 'package:birdhelp/models/fiche_retour.dart';
 import 'package:birdhelp/services/remote_service.dart';
 import 'package:birdhelp/utils.dart';
 import 'package:birdhelp/widget.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:birdhelp/models/coordinates.dart';
 import 'package:flutter/material.dart';
@@ -216,7 +217,8 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text("Paramètre de recherche"),
+                  Text("Paramètre de recherche",style: TextStyle(fontSize: 20)),
+                  SizedBox(height: 8),
                   Text("Modifier le rayon de recherche"),
                   Slider(
                     value: radiusMeter,
@@ -226,6 +228,58 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
                     onChanged: (double value) {
                     updated(state, value);
                     },
+                  ),
+                  SizedBox(height: 8),
+                  Text("Code couleur de la légende"),
+                  ListTile(
+                    leading: new Icon(Icons.format_paint),
+                    title: Row(
+                      children: [
+                        Text("Blésser -",style:TextStyle(color: Colors.amber) ),
+                        Text(" Errant -",style:TextStyle(color:Colors.blue)),
+                        Text(" Mal-traité -",style:TextStyle(color:Colors.red)),
+                        Text(" Mort",style:TextStyle(color:Colors.black)),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text("Icone Animaux"),
+                  ListTile(
+                    leading: new Icon(Icons.info),
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(FontAwesomeIcons.crow),
+                        Text(" Oiseaux " ),
+                        Icon(FontAwesomeIcons.dragon),
+                        Text("  Reptile " ),
+                        Icon(FontAwesomeIcons.hippo),
+                        Text("  Mouton " ),
+                      ],
+                    ),
+                  ),
+                  ListTile(
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(FontAwesomeIcons.horse),
+                        Text(" Cheval " ),
+                        Icon(FontAwesomeIcons.dog),
+                        Text(" Chien " ),
+                        Icon(FontAwesomeIcons.cat),
+                        Text(" Chat " ),
+                      ],
+                    ),
+                  ),
+                  ListTile(
+
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(FontAwesomeIcons.question),
+                        Text(" Autre " )
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -275,14 +329,14 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
                     leading: new Icon(Icons.monitor_heart),
                     title: Text(fiche.healthStatus ?? "Pas d'information"),
                     onTap: () {
-                      Navigator.pop(context);
+                      Fluttertoast.showToast(msg: 'Développement en cours');
                     },
                   ),
                   ListTile(
                     leading: new Icon(Icons.description),
                     title: Text(fiche.description ?? "Pas d'information"),
                     onTap: () {
-                      Navigator.pop(context);
+                      Fluttertoast.showToast(msg: 'Développement en cours');
                     },
                   ),
                   ListTile(
@@ -290,14 +344,14 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
                     title:
                         new Text("Helper : ${fiche.helper?.email.toString()}"),
                     onTap: () {
-                      Navigator.pop(context);
+                      Fluttertoast.showToast(msg: 'Développement en cours');
                     },
                   ),
                   ListTile(
                     leading: new Icon(Icons.share),
                     title: new Text('Partager cette fiche'),
                     onTap: () {
-                      Navigator.pop(context);
+                      Fluttertoast.showToast(msg: 'Développement en cours');
                     },
                   ),
                 ],

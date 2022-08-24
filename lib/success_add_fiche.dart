@@ -76,21 +76,21 @@ class _SuccessAddFicheState extends State<SuccessAddFiche> {
         CustomWidgets.socialButtonCircle(
             facebookColor, FontAwesomeIcons.facebookF, iconColor: Colors.white,
             onTap: () async {
-
+              Fluttertoast.showToast(msg: 'Développement en cours');
             }),
         CustomWidgets.socialButtonCircle(instaColor, FontAwesomeIcons.instagram,
             iconColor: Colors.white, onTap: () async {
-
+              Fluttertoast.showToast(msg: 'Développement en cours');
             }),
         CustomWidgets.socialButtonCircle(whatsappColor, FontAwesomeIcons.whatsapp,
             iconColor: Colors.white, onTap: (
                 ) {
-
+              Fluttertoast.showToast(msg: 'Développement en cours');
 
             }),
         CustomWidgets.socialButtonCircle(googleColor, FontAwesomeIcons.google,
             iconColor: Colors.white, onTap: () {
-
+              Fluttertoast.showToast(msg: 'Développement en cours');
             }),
       ],
     );

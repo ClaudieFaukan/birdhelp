@@ -12,6 +12,7 @@ import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'acceuil_page.dart';
@@ -49,6 +50,10 @@ class _MyAccountPageState extends State<MyAccountPage> {
     });
   }
 
+  deleteFicheById(int id){
+    RemoteService().deleteFicheById(id, user.email!);
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -67,7 +72,8 @@ class _MyAccountPageState extends State<MyAccountPage> {
                       replacement: Center(
                         child: CircularProgressIndicator(),
                       ),
-                      child: Container(
+                      child: SingleChildScrollView(
+                        child:Container(
                         child: ListView.separated(
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
@@ -79,6 +85,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                             itemCount: fichesRetour.length),
                         ),
                       ),
+                    ),
                     ),
                   _signOut(context),
                 ],
@@ -99,19 +106,9 @@ class _MyAccountPageState extends State<MyAccountPage> {
         // A motion is a widget used to control how the pane animates.
         motion: const ScrollMotion(),
 
-        // A pane can dismiss the Slidable.
-        dismissible: DismissiblePane(onDismissed: () {}),
-
         // All actions are defined in the children parameter.
         children:  [
-          // A SlidableAction can have an icon and/or a label.
-          SlidableAction(
-            onPressed: _doNothing,
-            backgroundColor: Color(0xFFFE4A49),
-            foregroundColor: Colors.white,
-            icon: Icons.delete,
-            label: 'Delete',
-          ),
+
           SlidableAction(
             onPressed: _doNothing,
             backgroundColor: Color(0xFF21B7CA),
@@ -124,22 +121,32 @@ class _MyAccountPageState extends State<MyAccountPage> {
 
       // The end action pane is the one at the right or the bottom side.
       endActionPane:  ActionPane(
+        dismissible: DismissiblePane(onDismissed: () {
+
+        }),
         motion: ScrollMotion(),
         children: [
+
           SlidableAction(
-            // An action can be bigger than the others.
-            flex: 2,
             onPressed: _doNothing,
             backgroundColor: Color(0xFF7BC043),
             foregroundColor: Colors.white,
             icon: Icons.archive,
-            label: 'Archive',
+            label: 'Modifier',
           ),
+          // A SlidableAction can have an icon and/or a label.
           SlidableAction(
-            backgroundColor: Color(0xFF0392CF),
+            onPressed: (context){
+              deleteFicheById(item.id!);
+              setState(() {
+                fichesRetour.remove(item);
+                Utils.showSnackBar("Vous avez suppimé la fiche");
+              });
+            },
+            backgroundColor: Color(0xFFFE4A49),
             foregroundColor: Colors.white,
-            icon: Icons.save,
-            label: 'Save', onPressed: _doNothing,
+            icon: Icons.delete,
+            label: 'Delete',
           ),
         ],
       ),
@@ -170,7 +177,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
 
 
 void _doNothing(BuildContext context){
-  print("do nothing");
+  Fluttertoast.showToast(msg: 'Développement en cours');
 }
   _signOut(context) {
     return Column(
