@@ -20,8 +20,9 @@ import '../utils.dart';
 
 class RemoteService {
   var client = http.Client();
+  //https://api-birdhelp.herokuapp.com/
   final apiUrl =
-      "https://20b3-2a01-cb06-30c-2200-91f5-4c4b-f67c-c3a7.eu.ngrok.io";
+      "https://api-birdhelp.herokuapp.com";
 
   Future<List<Categories>?> getCategories() async {
     var uri = Uri.parse("$apiUrl/categories");
@@ -151,9 +152,11 @@ class RemoteService {
       var json = response.body;
       json = json;
       List<FichesRetour> encode = fichesRetourFromJson(json);
+
       return encode;
     }else if (response.statusCode == 403){
-      print("something wrong");
+      List<FichesRetour> encodeBydefaut = [new FichesRetour(id:0,helper: new Helper(id: 0),coordinates: new Coordinate(id: 0, latitude: 0.0 , longitude: 0.0),description: '',photo: '',date: DateTime.now(),category: "",healthStatus: "",animal: new Animals(id: 0, color: ''))];
+      return encodeBydefaut;
     }
     else {
       throw Exception('Unexpected error occured!');
