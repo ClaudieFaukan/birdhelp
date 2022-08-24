@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'acceuil_page.dart';
 
 class AddFichePage extends StatefulWidget {
@@ -48,6 +48,7 @@ class _AddFichePageState extends State<AddFichePage> {
   final healthController = TextEditingController();
   final imageController = TextEditingController();
   final descriptionController = TextEditingController();
+  final coordinateController = TextEditingController();
 
 
 
@@ -67,7 +68,7 @@ class _AddFichePageState extends State<AddFichePage> {
   getPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    //Coordianate
+    //Coordinate
     if (prefs.containsKey('long') == false &&
         prefs.containsKey('lat') == false) {
       await prefs.setDouble('long', 0.0);
@@ -180,8 +181,8 @@ class _AddFichePageState extends State<AddFichePage> {
               ),
               child: Column(children: [
                 _header(context),
-                _label("Ou l'animal se situe ?"),
-                Text(fiche.geographicCoordinate.toString()),
+                _label("Ou l'animal se situe (obligatoire)?"),
+                Text(fiche.geographicCoordinate.toString(),style: TextStyle(fontStyle: FontStyle.italic),),
                 ElevatedButton.icon(
                   onPressed: () {
                     Navigator.of(context).push(
@@ -193,7 +194,7 @@ class _AddFichePageState extends State<AddFichePage> {
                   icon: Icon(Icons.pin_drop),
                   label: Text("coordonnée de l'animal"),
                 ),
-                _label("Categorie Animal"),
+                _label("Categorie Animal (obligatoire)"),
                 DropdownButton<Categories>(
                   value: _selectedCategorie.id == 0 ? null : _selectedCategorie,
                   isExpanded: true,
@@ -204,7 +205,7 @@ class _AddFichePageState extends State<AddFichePage> {
                     fiche.animal = _selectedCategorie.id;
                   }),
                 ),
-                _label("Etat de santé"),
+                _label("Etat de santé (obligatoire)"),
                 DropdownButton<HealthStatus>(
                   value: _selectedStatus.id == 0 ? null : _selectedStatus,
                   isExpanded: true,
@@ -215,7 +216,7 @@ class _AddFichePageState extends State<AddFichePage> {
                     fiche.healthstatus = valu.id!;
                   }),
                 ),
-                _label("Couleur de l'animal"),
+                _label("Couleur de l'animal (obligatoire)"),
                 TextFormField(
                   controller: colorController,
                   onChanged: (value) async {
@@ -226,29 +227,40 @@ class _AddFichePageState extends State<AddFichePage> {
                   },
                   decoration: InputDecoration(
                     hintText: "Couleur de l'animal",
-                    fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
+                    //fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
                     filled: true,
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(18),
                         borderSide: BorderSide.none),
                   ),
                 ),
-                _label("Cliché de l'animal"),
+                SizedBox(height: 8,),
+                _label("Cliché de l'animal (conseiller)"),
+                SizedBox(height: 8,),
                 Center(
                   child: _image == null
                       ? Text("Pas d'image selectionner")
                       : Image.file(_image!),
                 ),
-                FloatingActionButton(
-                    backgroundColor: Colors.orange,
-                    child: Icon(Icons.camera_alt_outlined),
-                    onPressed: pickCamera),
-                ElevatedButton.icon(
-                  icon: Icon(Icons.image),
-                  label: Text("gallery"),
-                  onPressed: pickGallery,
+                SizedBox(height: 8,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text("Camera "),
+                    FloatingActionButton(
+                        backgroundColor: Colors.orange,
+                        child: Icon(Icons.camera_alt_outlined),
+                        onPressed: pickCamera),
+                    Text(" Gallerie "),
+                    ElevatedButton.icon(
+                      icon: Icon(Icons.image),
+                      label: Text("gallerie"),
+                      onPressed: pickGallery,
+                    ),
+                  ],
                 ),
-                _label("Description de la situation"),
+                SizedBox(height: 8,),
+                _label("Description de la situation (obligatoire)"),
                 TextFormField(
                   controller: descriptionController,
                   keyboardType: TextInputType.multiline,
@@ -262,24 +274,64 @@ class _AddFichePageState extends State<AddFichePage> {
                     fiche.description = value;
                   },
                 ),
+                SizedBox(height: 15,),
                 ElevatedButton.icon(
                   onPressed: () async {
-                    //verifier si tout les element sont present
-                    //on envoi tout à une methode externe qui fera le taff
-                    //On redirige vers un success ou Non
-
-                    //Si image n'est pas vide alors on ajoute l'image dans la fiche
-                    //Sinon image par defaut
-                    if(_image!.path != ""){
-                      Reference ref = FirebaseStorage.instance.ref().child("animals/${user?.uid}${DateTime.now().microsecondsSinceEpoch.toString()}.jpg");
-                      await ref.putFile(_image!);
-                      await ref.getDownloadURL().then((value) =>
-                      fiche.photo = value
-                      );
-                    }else{
-                      fiche.photo = "https://cdn.dribbble.com/users/1247449/screenshots/3984840/media/dd1c0193e614422d6c9655482fe4a999.png";
+                    var listeManquante = [];
+                    //Verifier tout les champs si vide ou pas
+                    //coord
+                    if(coordinate.longitude == 0.0 && coordinate.latitude == 0.0){
+                      listeManquante.add("Coordonnée de l'animal");
                     }
-                    RemoteService().postFiche(fiche, context);
+                    //Animal
+                    if(fiche.animal == 0){
+                      listeManquante.add("Categorie Animal");
+                    }
+                    //EtatDesante
+                    if(fiche.healthstatus == 0){
+                      listeManquante.add("Etat de santé");
+                    }
+                    //couleur
+                    if(fiche.color == ""){
+                      listeManquante.add("Couleur animal");
+                    }
+                    //description
+                    if(fiche.description == ""){
+                      listeManquante.add("Descripiton de la situation");
+                    }
+
+                    if(listeManquante.isNotEmpty){
+                      Alert(
+                        context: context,
+                        type: AlertType.warning,
+                        title: "INFORMATIONS MANQUANTE",
+                        desc: "${listeManquante.toString()}",
+                        buttons: [
+                          DialogButton(
+                            child: Text(
+                              "Compris",
+                              style: TextStyle(color: Colors.white, fontSize: 20),
+                            ),
+                            onPressed: () => Navigator.pop(context),
+                            color: Color.fromRGBO(0, 179, 134, 1.0),
+                          ),
+                        ],
+                      ).show();
+                      return;
+                    }else{
+                      //Si image n'est pas vide alors on ajoute l'image dans la fiche
+                      //Sinon image par defaut
+                      if(_image!.path != ""){
+                        Reference ref = FirebaseStorage.instance.ref().child("animals/${user?.uid}${DateTime.now().microsecondsSinceEpoch.toString()}.jpg");
+                        await ref.putFile(_image!);
+                        await ref.getDownloadURL().then((value) =>
+                        fiche.photo = value
+                        );
+                      }else{
+                        fiche.photo = "https://cdn.dribbble.com/users/1247449/screenshots/3984840/media/dd1c0193e614422d6c9655482fe4a999.png";
+                      }
+                      RemoteService().postFiche(fiche, context);
+                    }
                   },
                   icon: Icon(Icons.monitor_heart),
                   label: Text("Je signale"),

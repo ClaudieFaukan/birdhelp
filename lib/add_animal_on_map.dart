@@ -158,7 +158,6 @@ class TapToAddPageState extends State<TapToAddPage> {
           id: 0, longitude: latlng.longitude, latitude: latlng.latitude);
       tappedPoints.add(latlng);
     });
-    print(latlng.toString());
 
   }
 
