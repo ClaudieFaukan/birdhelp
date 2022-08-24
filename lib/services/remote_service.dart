@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:birdhelp/main.dart';
 import 'package:birdhelp/models/categories.dart';
 import 'package:birdhelp/models/coordinates.dart';
+import 'package:birdhelp/models/fiche_around_radius.dart';
 import 'package:birdhelp/models/fiche_retour.dart';
 import 'package:birdhelp/models/health_status.dart';
 import 'package:birdhelp/success_add_fiche.dart';
@@ -20,7 +21,7 @@ import '../utils.dart';
 class RemoteService {
   var client = http.Client();
   final apiUrl =
-      "https://a3bd-2a01-cb06-30c-2200-fcab-751b-29eb-add4.eu.ngrok.io";
+      "https://20b3-2a01-cb06-30c-2200-91f5-4c4b-f67c-c3a7.eu.ngrok.io";
 
   Future<List<Categories>?> getCategories() async {
     var uri = Uri.parse("$apiUrl/categories");
@@ -132,6 +133,27 @@ class RemoteService {
     }else if (response.statusCode == 403){
       return [new FichesRetour(id: 0,helper: new Helper(id: 0),animal: new Animals(id: 0, color: ""),healthStatus: "",category: "Pas des signalement pour l'instant",
           date: new DateTime.now(), description: "Continué à regarder autour de vous, un animal à peut être besoin d'être signaler", coordinates: new Coordinate(id: 0, latitude:0.0, longitude:0.0))];
+    }
+    else {
+      throw Exception('Unexpected error occured!');
+    }
+  }
+
+  Future<List<FichesRetour>?> getFicheRetourByRadius(Coordinate currentPosition, double radiusMeter) async{
+    var ficheRadius = new FicheAroundRadius(coordinates: currentPosition, radius: radiusMeter);
+    var json = jsonEncode(ficheRadius.toJson());
+    var url = Uri.parse("$apiUrl/coordinates/by_current_position/radius");
+    var response = await client.post(url,headers: {HttpHeaders.contentTypeHeader: "application/json"},
+        body: json);
+
+    if (response.statusCode == 200){
+
+      var json = response.body;
+      json = json;
+      List<FichesRetour> encode = fichesRetourFromJson(json);
+      return encode;
+    }else if (response.statusCode == 403){
+      print("something wrong");
     }
     else {
       throw Exception('Unexpected error occured!');
