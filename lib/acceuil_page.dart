@@ -11,10 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:open_street_map_search_and_pick/open_street_map_search_and_pick.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import 'my_account_page.dart';
-
-
 
 class AcceuilPage extends StatelessWidget {
   const AcceuilPage({Key? key}) : super(key: key);
@@ -32,6 +31,22 @@ class AcceuilPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Text("acceuil"),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      launchUrlString(
+                          "https://docs.google.com/forms/d/e/1FAIpQLSdTVdWVcQAK6M-qoOrHQItZ5TUuxriq3I-iePYrweIFzKeiEQ/viewform?usp=sf_link");
+                    },
+                    icon: Icon(Icons.bug_report),
+                    label: Text("Rapporter un bug"),
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      launchUrlString(
+                          "https://docs.google.com/forms/d/e/1FAIpQLSe_E1Ax-WwK2U2bze3JeFmIdw8GddvLtIoClf_iRRG5R5E-ng/viewform?usp=sf_link");
+                    },
+                    icon: Icon(Icons.format_paint),
+                    label: Text("Une suggestion d'améliorations ?"),
+                  ),
                 ],
               ),
             ),
@@ -39,5 +54,4 @@ class AcceuilPage extends StatelessWidget {
           bottomNavigationBar: CustomWidgets.bottomAppBar(context)),
     );
   }
-
 }

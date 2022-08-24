@@ -271,7 +271,7 @@ class _AddFichePageState extends State<AddFichePage> {
                     //Si image n'est pas vide alors on ajoute l'image dans la fiche
                     //Sinon image par defaut
                     if(_image!.path != ""){
-                      Reference ref = FirebaseStorage.instance.ref().child("animal.jpg");
+                      Reference ref = FirebaseStorage.instance.ref().child("animals/${user?.uid}${DateTime.now().microsecondsSinceEpoch.toString()}.jpg");
                       await ref.putFile(_image!);
                       await ref.getDownloadURL().then((value) =>
                       fiche.photo = value
