@@ -6,6 +6,7 @@ import 'package:birdhelp/models/fiche_retour.dart';
 import 'package:birdhelp/models/helper.dart';
 import 'package:birdhelp/services/remote_service.dart';
 import 'package:birdhelp/setting.dart';
+import 'package:birdhelp/update_fiche.dart';
 import 'package:birdhelp/utils.dart';
 import 'package:birdhelp/widget.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
@@ -123,7 +124,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
         motion: ScrollMotion(),
         children: [
           SlidableAction(
-            onPressed: _doNothing,
+            onPressed: (context)=> _updateFiche(item),
             backgroundColor: Color(0xFF7BC043),
             foregroundColor: Colors.white,
             icon: Icons.archive,
@@ -182,6 +183,10 @@ class _MyAccountPageState extends State<MyAccountPage> {
         ),
       ],
     ).show();
+  }
+
+   _updateFiche(FichesRetour item){
+    Navigator.push( context, MaterialPageRoute( builder: (context) => UpdateFiche(fiche: item)));
   }
 
   void _deleteItem(item) {

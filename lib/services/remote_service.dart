@@ -20,9 +20,8 @@ import '../utils.dart';
 
 class RemoteService {
   var client = http.Client();
-  //https://api-birdhelp.herokuapp.com/
   final apiUrl =
-      "https://api-birdhelp.herokuapp.com";
+      "https://c677-2a01-cb06-30c-2200-a0ef-ff42-958f-3d05.eu.ngrok.io";
 
   Future<List<Categories>?> getCategories() async {
     var uri = Uri.parse("$apiUrl/categories");

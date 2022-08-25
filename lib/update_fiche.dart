@@ -3,6 +3,7 @@ import 'package:birdhelp/add_animal_on_map.dart';
 import 'package:birdhelp/models/categories.dart';
 import 'package:birdhelp/models/coordinates.dart';
 import 'package:birdhelp/models/fiche.dart';
+import 'package:birdhelp/models/fiche_retour.dart';
 import 'package:birdhelp/models/health_status.dart';
 import 'package:birdhelp/models/helper.dart';
 import 'package:birdhelp/services/remote_service.dart';
@@ -16,7 +17,9 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'acceuil_page.dart';
 
 class UpdateFiche extends StatefulWidget {
-  const UpdateFiche({Key? key}) : super(key: key);
+  const UpdateFiche({Key? key,required this.fiche}) : super(key: key);
+
+  final FichesRetour fiche;
 
   @override
   _UpdateFicheState createState() => _UpdateFicheState();
@@ -32,14 +35,7 @@ class _UpdateFicheState extends State<UpdateFiche> {
   List<HealthStatus>? status = [];
   bool isLoaded = false;
   Coordinate coordinate = Coordinate(id: 0, longitude: 0.0, latitude: 0.0);
-  Fiche fiche = Fiche(
-      animal: 0,
-      geographicCoordinate: [0.0],
-      date: DateTime.now(),
-      healthstatus: 0,
-      description: "",
-      category: 0,
-      color: "");
+
 
   List<DropdownMenuItem<Categories>> categorieItem = [];
 
@@ -58,30 +54,30 @@ class _UpdateFicheState extends State<UpdateFiche> {
     getCategoriesData();
     getHealthStatus();
     getPreferences();
-    helper.email = user?.email;
-    helper.firstName = user?.displayName;
-    helper.lastName = user?.displayName;
-
-    fiche.helper = helper;
+  _selectedCategorie.name = widget.fiche.category!;
   }
 
   getPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     //Coordinate
+    //on initialise les valeurs par defaut de preference a celle de la fiche
     if (prefs.containsKey('long') == false &&
         prefs.containsKey('lat') == false) {
-      await prefs.setDouble('long', 0.0);
-      await prefs.setDouble("lat", 0.0);
+      await prefs.setDouble('long', widget.fiche.coordinates!.longitude);
+      await prefs.setDouble("lat", widget.fiche.coordinates!.latitude);
     } else {
+      //si les preference on changer alors
       coordinate.longitude = prefs.getDouble("long")!;
       coordinate.latitude = prefs.getDouble("lat")!;
-      fiche.geographicCoordinate = [coordinate.longitude, coordinate.latitude];
+      widget.fiche.coordinates?.latitude = coordinate.latitude;
+      widget.fiche.coordinates?.longitude = coordinate.longitude;
     }
 
     //couleur
     if (prefs.containsKey("color") == false) {
-      await prefs.setString("color", "");
+      await prefs.setString("color", widget.fiche.animal!.color);
+      colorController.text = prefs.getString("color")!;
     } else {
       colorController.text = prefs.getString("color")!;
     }
@@ -94,8 +90,10 @@ class _UpdateFicheState extends State<UpdateFiche> {
     }
     //description
     if (prefs.containsKey("description") == false) {
-      await prefs.setString("description", "");
+      await prefs.setString("description", widget.fiche!.description!);
+      descriptionController.text = prefs.getString("description")!;
     } else {
+
       descriptionController.text = prefs.getString("description")!;
     }
   }
@@ -128,6 +126,11 @@ class _UpdateFicheState extends State<UpdateFiche> {
 
   getCategoriesData() async {
     categories = await RemoteService().getCategories();
+    categories!.forEach((element) {
+      if(element.name == widget.fiche.category){
+        _selectedCategorie = element;
+      }
+    });
     if (categories != null) {
       setState(() {
         isLoaded = true;
@@ -137,6 +140,11 @@ class _UpdateFicheState extends State<UpdateFiche> {
 
   getHealthStatus() async {
     status = await RemoteService().getStatus();
+    status!.forEach((element) {
+      if(element.status == widget.fiche.healthStatus){
+        _selectedStatus = element;
+      }
+    });
     if (status != null) {
       setState(() {
         isLoaded = true;
@@ -182,7 +190,7 @@ class _UpdateFicheState extends State<UpdateFiche> {
               child: Column(children: [
                 _header(context),
                 _label("Ou l'animal se situe (obligatoire)?"),
-                Text(fiche.geographicCoordinate.toString(),style: TextStyle(fontStyle: FontStyle.italic),),
+                Text("[${widget.fiche.coordinates!.longitude},${widget.fiche.coordinates!.latitude}]",style: const TextStyle(fontStyle: FontStyle.italic),),
                 ElevatedButton.icon(
                   onPressed: () {
                     Navigator.of(context).push(
@@ -202,7 +210,7 @@ class _UpdateFicheState extends State<UpdateFiche> {
                   items: categorieItem,
                   onChanged: (valu) => setState(() {
                     _selectedCategorie = valu!;
-                    fiche.animal = _selectedCategorie.id;
+                    widget.fiche.animal?.id = _selectedCategorie.id;
                   }),
                 ),
                 _label("Etat de santé (obligatoire)"),
@@ -213,7 +221,8 @@ class _UpdateFicheState extends State<UpdateFiche> {
                   items: statusItem,
                   onChanged: (valu) => setState(() {
                     _selectedStatus = valu!;
-                    fiche.healthstatus = valu.id!;
+                    //TODO modif return non string mais id
+                    widget.fiche.healthStatus = valu.status;
                   }),
                 ),
                 _label("Couleur de l'animal (obligatoire)"),
@@ -223,7 +232,7 @@ class _UpdateFicheState extends State<UpdateFiche> {
                     SharedPreferences prefs =
                     await SharedPreferences.getInstance();
                     await prefs.setString("color", value);
-                    fiche.color = prefs.getString("color");
+                    widget.fiche.animal?.color = prefs.getString("color")!;
                   },
                   decoration: InputDecoration(
                     hintText: "Couleur de l'animal",
@@ -238,8 +247,8 @@ class _UpdateFicheState extends State<UpdateFiche> {
                 _label("Cliché de l'animal (conseiller)"),
                 SizedBox(height: 8,),
                 Center(
-                  child: _image == null
-                      ? Text("Pas d'image selectionner")
+                  child: _image?.path == ""
+                      ? Image.network(widget.fiche.photo!)
                       : Image.file(_image!),
                 ),
                 SizedBox(height: 8,),
@@ -271,7 +280,7 @@ class _UpdateFicheState extends State<UpdateFiche> {
                     SharedPreferences prefs =
                     await SharedPreferences.getInstance();
                     await prefs.setString("description", value);
-                    fiche.description = value;
+                    widget.fiche.description = value;
                   },
                 ),
                 SizedBox(height: 15,),
@@ -284,19 +293,19 @@ class _UpdateFicheState extends State<UpdateFiche> {
                       listeManquante.add("Coordonnée de l'animal");
                     }
                     //Animal
-                    if(fiche.animal == 0){
+                    if(widget.fiche.animal == 0){
                       listeManquante.add("Categorie Animal");
                     }
                     //EtatDesante
-                    if(fiche.healthstatus == 0){
+                    if(widget.fiche.healthStatus == 0){
                       listeManquante.add("Etat de santé");
                     }
                     //couleur
-                    if(fiche.color == ""){
+                    if(widget.fiche.animal?.color == ""){
                       listeManquante.add("Couleur animal");
                     }
                     //description
-                    if(fiche.description == ""){
+                    if(widget.fiche.description == ""){
                       listeManquante.add("Descripiton de la situation");
                     }
 
@@ -325,16 +334,19 @@ class _UpdateFicheState extends State<UpdateFiche> {
                         Reference ref = FirebaseStorage.instance.ref().child("animals/${user?.uid}${DateTime.now().microsecondsSinceEpoch.toString()}.jpg");
                         await ref.putFile(_image!);
                         await ref.getDownloadURL().then((value) =>
-                        fiche.photo = value
+                        widget.fiche.photo = value
                         );
                       }else{
-                        fiche.photo = "https://cdn.dribbble.com/users/1247449/screenshots/3984840/media/dd1c0193e614422d6c9655482fe4a999.png";
+                        widget.fiche.photo = "https://cdn.dribbble.com/users/1247449/screenshots/3984840/media/dd1c0193e614422d6c9655482fe4a999.png";
                       }
-                      RemoteService().postFiche(fiche, context);
+                      //TODO
+                      //Change pour update fiche
+                      //RemoteService().postFiche(widget.fiche, context);
+                      print(widget.fiche.toString());
                     }
                   },
                   icon: Icon(Icons.monitor_heart),
-                  label: Text("Je signale"),
+                  label: Text("Je modifie mon signalement"),
                 ),
               ]),
             ),
