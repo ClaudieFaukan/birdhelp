@@ -190,7 +190,7 @@ class _MapAnimalAroundState extends State<MapAnimalAround> {
                   ],
                   options: MapOptions(
                     center: LatLng(lat, long),
-                    zoom: 17,
+                    zoom: 13,
                     onTap: _handleTap,
                   ),
                 ),
