@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:birdhelp/models/fiche_retour.dart';
+import 'package:birdhelp/update_fiche.dart';
 import 'package:birdhelp/widget.dart';
 import 'package:open_street_map_search_and_pick/open_street_map_search_and_pick.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,7 +22,8 @@ import 'my_account_page.dart';
 class TapToAddPage extends StatefulWidget {
   static const String route = '/tap';
 
-  const TapToAddPage({Key? key}) : super(key: key);
+  const TapToAddPage({Key? key, this.item}) : super(key: key);
+  final FichesRetour? item;
 
   @override
   State<StatefulWidget> createState() {
@@ -94,12 +97,21 @@ class TapToAddPageState extends State<TapToAddPage> {
                 }else{
                   lat = coordinate.latitude;
                   long= coordinate.longitude;
+                  widget.item!.coordinates!.latitude = lat;
+                  widget.item!.coordinates!.longitude = long;
                 }
                 //ajouter long et lat aux preferences
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 await prefs.setDouble('long', long);
                 await prefs.setDouble("lat", lat);
-
+                if( prefs.containsKey("update") && prefs.getBool("update") == true){
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            UpdateFiche(fiche: widget.item!),
+                      ),
+                          (route) => false);
+                }
                 //retourner sur le formulaire fiche avec coordonne de coordinates
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(

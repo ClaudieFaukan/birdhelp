@@ -12,6 +12,7 @@ String ficheToJson(Fiche data) => json.encode(data.toJson());
 
 class Fiche {
   Fiche({
+    this.id,
     this.helper,
     required this.animal,
     required this.geographicCoordinate,
@@ -23,6 +24,7 @@ class Fiche {
     required this.color,
   });
 
+  int? id;
   Helper? helper;
   int? animal;
   List<double> geographicCoordinate;
@@ -34,6 +36,7 @@ class Fiche {
   String? color;
 
   factory Fiche.fromJson(Map<String, dynamic> json) => Fiche(
+    id: json["id"],
     helper: Helper.fromJson(json["helper"]),
     animal: json["Animal"],
     geographicCoordinate: List<double>.from(json["geographicCoordinate"].map((x) => x)),
@@ -46,6 +49,7 @@ class Fiche {
   );
 
   Map<String, dynamic> toJson() => {
+    "id": id,
     "helper": helper?.toJson(),
     "Animal": animal,
     "geographicCoordinate": List<dynamic>.from(geographicCoordinate.map((x) => x)),

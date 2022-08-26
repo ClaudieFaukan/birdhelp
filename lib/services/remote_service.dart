@@ -21,7 +21,7 @@ import '../utils.dart';
 class RemoteService {
   var client = http.Client();
   final apiUrl =
-      "https://c677-2a01-cb06-30c-2200-a0ef-ff42-958f-3d05.eu.ngrok.io";
+      "https://1c59-2a01-cb06-30c-2200-d1e-9849-8c30-e539.eu.ngrok.io";
 
   Future<List<Categories>?> getCategories() async {
     var uri = Uri.parse("$apiUrl/categories");
@@ -178,5 +178,18 @@ class RemoteService {
     }
   }
 
+  Future<void> updateFiche(int id, Fiche item) async {
+    var url = Uri.parse("$apiUrl/user/fiche/update/${id}");
+    var ficheparse = ficheToJson(item);
+    print(ficheparse);
+    var response = await client.post(url,
+        headers: {HttpHeaders.contentTypeHeader: "application/json"},
+        body: ficheparse);
+    if(response.statusCode == 204){
+      print("update ok");
+    }else{
+      print("something wrong");
+    }
+  }
 
 }

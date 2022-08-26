@@ -120,7 +120,6 @@ class _MyAccountPageState extends State<MyAccountPage> {
 
       // The end action pane is the one at the right or the bottom side.
       endActionPane: ActionPane(
-        dismissible: DismissiblePane(onDismissed: () {}),
         motion: ScrollMotion(),
         children: [
           SlidableAction(
