@@ -410,7 +410,7 @@ class _UpdateFicheState extends State<UpdateFiche> {
 
                         //Change pour update fiche
                         RemoteService()
-                            .updateFiche(ficheToSend.id!, ficheToSend);
+                            .updateFiche(ficheToSend.id!, ficheToSend, context);
                       }
                     },
                     icon: Icon(Icons.monitor_heart),
