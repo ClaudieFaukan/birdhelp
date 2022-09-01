@@ -32,6 +32,7 @@ class UpdateCoordinateFiche extends StatefulWidget {
 }
 
 class UpdateCoordinateFicheState extends State<UpdateCoordinateFiche> {
+  //lat & long for current location user
   double lat = 0.0;
   double long = 0.0;
   List<LatLng> tappedPoints = [];
@@ -57,12 +58,12 @@ class UpdateCoordinateFicheState extends State<UpdateCoordinateFiche> {
 
   getPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    if(prefs.containsKey("long") && prefs.containsKey("lat")){
 
-      LatLng latLng = LatLng(prefs.getDouble("lat")!,prefs.getDouble("long")!);
+    LatLng latLng = LatLng(widget.fiche.coordinates!.latitude,widget.fiche.coordinates!.longitude);
+  setState(() {
+    tappedPoints.add(latLng);
+  });
 
-      tappedPoints.add(latLng);
-    }
   }
 
 

@@ -69,6 +69,8 @@ class _UpdateFicheState extends State<UpdateFiche> {
     getCategoriesData();
     getHealthStatus();
     setState(() {
+      ficheToSend.helper = widget.fiche.helper!;
+      ficheToSend.id = widget.fiche.id;
       _selectedCategorie.name = widget.fiche.category!;
     });
   }
@@ -76,8 +78,6 @@ class _UpdateFicheState extends State<UpdateFiche> {
   getPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    ficheToSend.helper = widget.fiche.helper!;
-    ficheToSend.id = widget.fiche.id;
     //Coordinate
     if (prefs.containsKey("update") == false) {
       await prefs.setBool("update", true);
@@ -310,7 +310,9 @@ class _UpdateFicheState extends State<UpdateFiche> {
                       SharedPreferences prefs =
                           await SharedPreferences.getInstance();
                       await prefs.setString("colorUpdate", value);
-                      ficheToSend.color = value;
+                      setState(() {
+                        ficheToSend.color = value;
+                      });
                     },
                     decoration: InputDecoration(
                       hintText: "Couleur de l'animal",
@@ -416,7 +418,8 @@ class _UpdateFicheState extends State<UpdateFiche> {
                       } else {
                         //Si image n'est pas vide alors on ajoute l'image dans la fiche
                         //Sinon image par defaut
-                        if (_image != null) {
+                        if (_image != null && _image?.path != "") {
+                          print(_image.toString());
                           Reference ref = FirebaseStorage.instance.ref().child(
                               "animals/${user?.uid}${DateTime.now().microsecondsSinceEpoch.toString()}.jpg");
                           await ref.putFile(_image!);
@@ -424,13 +427,34 @@ class _UpdateFicheState extends State<UpdateFiche> {
                               .getDownloadURL()
                               .then((value) => ficheToSend.photo = value);
                         }
-                        //TODO
-                        //completer la fiche pour l'envoi d'update
+                        //si fichetosend n'est pas modifier alors return pop up
+                        bool isempty = ficheToSendIsEmpty();
+                        if(isempty){
+                          Alert(
+                            context: context,
+                            type: AlertType.warning,
+                            title: "AUCUNE INFORMATION N'A ÉTÉ CHANGER",
+                            desc: "${ficheToSend.toJson()}",
+                            buttons: [
+                              DialogButton(
+                                child: Text(
+                                  "Compris",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 20),
+                                ),
+                                onPressed: () => Navigator.pop(context),
+                                color: Color.fromRGBO(0, 179, 134, 1.0),
 
+                              ),
+                            ],
+                          ).show();
+                          return;
+                        }
                         SharedPreferences prefs =
                             await SharedPreferences.getInstance();
                         await prefs.clear();
                         //Change pour update fiche
+
                         RemoteService()
                             .updateFiche(ficheToSend.id!, ficheToSend, context);
                       }
@@ -447,6 +471,14 @@ class _UpdateFicheState extends State<UpdateFiche> {
     );
   }
 
+  bool ficheToSendIsEmpty(){
+    if(ficheToSend.animal != 0 || ficheToSend.geographicCoordinate != [0.0]
+        || ficheToSend.photo != null || ficheToSend.healthstatus != 0
+        || ficheToSend.description != '' || ficheToSend.color != ''){
+      return false;
+    }
+    return true;
+  }
   Widget getImage() {
     if (_image?.path == null || _image?.path == "") {
       return Image.network(widget.fiche.photo!);
