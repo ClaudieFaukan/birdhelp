@@ -34,8 +34,8 @@ class _MyAccountPageState extends State<MyAccountPage> {
 
   @override
   void initState() {
-    super.initState();
     getAllFichesUser(user.email!);
+    super.initState();
   }
 
   getAllFichesUser(String email) async {
@@ -61,45 +61,43 @@ class _MyAccountPageState extends State<MyAccountPage> {
     return SafeArea(
       child: Scaffold(
           body: SingleChildScrollView(
-            child: Container(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Text("Mes signalements"),
-                  Container(
-                    child: Visibility(
-                      visible: isLoaded,
-                      replacement: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                      child: SingleChildScrollView(
-                        child: Container(
-                          child: ListView.separated(
-                              scrollDirection: Axis.vertical,
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) {
-                                final item = fichesRetour[index];
-                                return buildListTile(item);
-                              },
-                              separatorBuilder: (context, index) => Divider(),
-                              itemCount: fichesRetour.length),
-                        ),
-                      ),
-                    ),
-                  ),
+                  ficheItem(),
                   _signOut(context),
                 ],
               ),
-            ),
           ),
           bottomNavigationBar: CustomWidgets.bottomAppBar(context)),
     );
   }
 
+
+  Widget ficheItem(){
+
+    return Visibility(
+      visible: isLoaded,
+      replacement: Center(
+        child: CircularProgressIndicator(),
+      ),
+      child: ListView.separated(
+        controller: ScrollController(),
+        shrinkWrap: true,
+        itemBuilder: (context, index) {
+          final item = fichesRetour[index];
+          return buildListTile(item);
+        },
+        separatorBuilder: (context, index) => Divider(),
+        itemCount: fichesRetour.length,
+      ),
+    );
+  }
+
+
   Widget buildListTile(FichesRetour item) {
     return Slidable(
-      // Specify a key if the Slidable is dismissible.
-      key: const ValueKey(0),
 
       // The start action pane is the one at the left or the top side.
       startActionPane: ActionPane(
