@@ -8,6 +8,7 @@ import 'package:birdhelp/models/fiche_retour.dart';
 import 'package:birdhelp/models/health_status.dart';
 import 'package:birdhelp/models/helper.dart';
 import 'package:birdhelp/services/remote_service.dart';
+import 'package:birdhelp/update_fiche_coordinate.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -48,6 +49,8 @@ class _UpdateFicheState extends State<UpdateFiche> {
       category: 0,
       color: "");
 
+  bool imageLoad = false;
+  var preferences;
   //END TEST
 
   List<DropdownMenuItem<Categories>> categorieItem = [];
@@ -62,9 +65,9 @@ class _UpdateFicheState extends State<UpdateFiche> {
   @override
   void initState() {
     super.initState();
+    getPreferences();
     getCategoriesData();
     getHealthStatus();
-    getPreferences();
     setState(() {
       _selectedCategorie.name = widget.fiche.category!;
     });
@@ -72,10 +75,11 @@ class _UpdateFicheState extends State<UpdateFiche> {
 
   getPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
     ficheToSend.helper = widget.fiche.helper!;
     ficheToSend.id = widget.fiche.id;
     //Coordinate
-    if( prefs.containsKey("update") == false){
+    if (prefs.containsKey("update") == false) {
       await prefs.setBool("update", true);
     }
     //on initialise les valeurs par defaut de preference a celle de la fiche
@@ -87,17 +91,25 @@ class _UpdateFicheState extends State<UpdateFiche> {
       coordinate.latitude = widget.fiche.coordinates!.latitude;
     } else {
       //si les preference on changer alors
+
       coordinate.longitude = prefs.getDouble("long")!;
       coordinate.latitude = prefs.getDouble("lat")!;
-      ficheToSend.geographicCoordinate = [coordinate.longitude,coordinate.latitude];
+      ficheToSend.geographicCoordinate = [
+        coordinate.longitude,
+        coordinate.latitude
+      ];
     }
 
     //couleur
-    if (prefs.containsKey("color") == false) {
-      await prefs.setString("color", widget.fiche.animal!.color);
-      colorController.text = prefs.getString("color")!;
+    if (prefs.containsKey("colorUpdate") == false) {
+      setState(() {
+        colorController.text = widget.fiche.animal!.color;
+      });
+      await prefs.setString("colorUpdate", widget.fiche.animal!.color);
     } else {
-      colorController.text = prefs.getString("color")!;
+      setState(() {
+        colorController.text = prefs.getString("colorUpdate")!;
+      });
     }
 
     //photo
@@ -107,11 +119,15 @@ class _UpdateFicheState extends State<UpdateFiche> {
       _image = File(prefs.getString("image")!);
     }
     //description
-    if (prefs.containsKey("description") == false) {
-      await prefs.setString("description", widget.fiche!.description!);
-      descriptionController.text = prefs.getString("description")!;
+    if (prefs.containsKey("descriptionUpdate") == false) {
+      setState(() {
+        descriptionController.text = widget.fiche!.description!!;
+      });
+      await prefs.setString("descriptionUpdate", widget.fiche!.description!);
     } else {
-      descriptionController.text = prefs.getString("description")!;
+      setState(() {
+        descriptionController.text = prefs.getString("descriptionUpdate")!;
+      });
     }
     setState(() {
       isLoaded = true;
@@ -128,9 +144,11 @@ class _UpdateFicheState extends State<UpdateFiche> {
         maxHeight: 512,
         imageQuality: 75);
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString("image", image!.path.toString());
-    setState(() {
+
+    setState(() async {
+      await prefs.setString("image", image!.path.toString());
       _image = File(image!.path);
+      getImage();
     });
   }
 
@@ -146,7 +164,10 @@ class _UpdateFicheState extends State<UpdateFiche> {
       final imageTemporary = File(_image.path);
       setState(() => this._image = imageTemporary);
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString("image", _image!.path.toString());
+      setState(() async {
+        await prefs.setString("image", _image!.path.toString());
+        getImage();
+      });
     } on PlatformException catch (e) {
       print('failed to pick image $e');
     }
@@ -197,14 +218,15 @@ class _UpdateFicheState extends State<UpdateFiche> {
     }).toList();
 
     SharedPreferences prefs;
+
     //Wrap in willscope : if user click ancdroid button back reset prefs
     return WillPopScope(
       onWillPop: () async {
         prefs = await SharedPreferences.getInstance();
         prefs.clear();
         return true;
-        },
-      child: SafeArea  (
+      },
+      child: SafeArea(
         child: Scaffold(
           appBar: AppBar(
             automaticallyImplyLeading: false,
@@ -241,7 +263,8 @@ class _UpdateFicheState extends State<UpdateFiche> {
                     onPressed: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => TapToAddPage(),
+                          builder: (context) =>
+                              UpdateCoordinateFiche(fiche: widget.fiche),
                         ),
                       );
                     },
@@ -253,8 +276,9 @@ class _UpdateFicheState extends State<UpdateFiche> {
                     visible: categorieLoaded,
                     replacement: CircularProgressIndicator(),
                     child: DropdownButton<Categories>(
-                      value:
-                          _selectedCategorie.id == 0 ? null : _selectedCategorie,
+                      value: _selectedCategorie.id == 0
+                          ? null
+                          : _selectedCategorie,
                       isExpanded: true,
                       hint: Text("Categorie Animal"),
                       items: categorieItem,
@@ -285,7 +309,7 @@ class _UpdateFicheState extends State<UpdateFiche> {
                     onChanged: (value) async {
                       SharedPreferences prefs =
                           await SharedPreferences.getInstance();
-                      await prefs.setString("color", value);
+                      await prefs.setString("colorUpdate", value);
                       ficheToSend.color = value;
                     },
                     decoration: InputDecoration(
@@ -304,11 +328,7 @@ class _UpdateFicheState extends State<UpdateFiche> {
                   SizedBox(
                     height: 8,
                   ),
-                  Center(
-                    child: _image?.path == null
-                        ? Image.network(widget.fiche.photo!)
-                        : Image.file(_image!),
-                  ),
+                  Center(child: getImage()),
                   SizedBox(
                     height: 8,
                   ),
@@ -341,7 +361,7 @@ class _UpdateFicheState extends State<UpdateFiche> {
                     onChanged: (value) async {
                       SharedPreferences prefs =
                           await SharedPreferences.getInstance();
-                      await prefs.setString("description", value);
+                      await prefs.setString("descriptionUpdate", value);
                       ficheToSend.description = value;
                     },
                   ),
@@ -384,8 +404,8 @@ class _UpdateFicheState extends State<UpdateFiche> {
                             DialogButton(
                               child: Text(
                                 "Compris",
-                                style:
-                                    TextStyle(color: Colors.white, fontSize: 20),
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 20),
                               ),
                               onPressed: () => Navigator.pop(context),
                               color: Color.fromRGBO(0, 179, 134, 1.0),
@@ -407,7 +427,9 @@ class _UpdateFicheState extends State<UpdateFiche> {
                         //TODO
                         //completer la fiche pour l'envoi d'update
 
-
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        await prefs.clear();
                         //Change pour update fiche
                         RemoteService()
                             .updateFiche(ficheToSend.id!, ficheToSend, context);
@@ -423,6 +445,13 @@ class _UpdateFicheState extends State<UpdateFiche> {
         ),
       ),
     );
+  }
+
+  Widget getImage() {
+    if (_image?.path == null || _image?.path == "") {
+      return Image.network(widget.fiche.photo!);
+    }
+    return Image.file(_image!);
   }
 
   _header(context) {

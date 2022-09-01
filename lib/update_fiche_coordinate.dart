@@ -19,25 +19,25 @@ import 'package:positioned_tap_detector_2/positioned_tap_detector_2.dart';
 import 'acceuil_page.dart';
 import 'my_account_page.dart';
 
-class TapToAddPage extends StatefulWidget {
+class UpdateCoordinateFiche extends StatefulWidget {
   static const String route = '/tap';
 
-  const TapToAddPage({Key? key}) : super(key: key);
-
+  const UpdateCoordinateFiche({Key? key, required this.fiche}) : super(key: key);
+  final FichesRetour fiche;
 
   @override
   State<StatefulWidget> createState() {
-    return TapToAddPageState();
+    return UpdateCoordinateFicheState();
   }
 }
 
-class TapToAddPageState extends State<TapToAddPage> {
+class UpdateCoordinateFicheState extends State<UpdateCoordinateFiche> {
   double lat = 0.0;
   double long = 0.0;
   List<LatLng> tappedPoints = [];
   bool isLoaded = false;
   Coordinate coordinate = Coordinate(id: 0, longitude: 0.0, latitude: 0.0);
-  
+
 
   @override
   void initState() {
@@ -102,6 +102,9 @@ class TapToAddPageState extends State<TapToAddPage> {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 await prefs.setDouble('long', long);
                 await prefs.setDouble("lat", lat);
+                if(prefs.getBool("update") == true){
+                  Navigator.push( context, MaterialPageRoute( builder: (context) => UpdateFiche(fiche :widget.fiche!)));
+                }else{
                   //retourner sur le formulaire fiche avec coordonne de coordinates
                   Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(
@@ -109,6 +112,7 @@ class TapToAddPageState extends State<TapToAddPage> {
                             AddFichePage(),
                       ),
                           (route) => false);
+                }
 
               },
               icon: Icon(Icons.check))
@@ -134,7 +138,7 @@ class TapToAddPageState extends State<TapToAddPage> {
                   layers: [
                     TileLayerOptions(
                       urlTemplate:
-                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                       userAgentPackageName: 'dev.fleaflet.flutter_map.example',
                     ),
                     MarkerLayerOptions(markers: markers)
