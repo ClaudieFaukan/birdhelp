@@ -192,9 +192,21 @@ class RemoteService {
           builder: (context) => const AcceuilPage(),
         ),
       );
-      Utils.showSnackBar("Mis a jour du signalement : OK !");
+
     }else{
       print("something wrong");
+    }
+  }
+
+  Future<String> countFiche(String email) async{
+    var url = Uri.parse("$apiUrl/user/fiche/count/$email");
+    var response = await client.get(url);
+    if(response.statusCode == 200){
+      return response.body.toString();
+    }
+    else{
+      return "0";
+
     }
   }
 

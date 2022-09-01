@@ -1,4 +1,5 @@
 import 'package:birdhelp/add_fiche_page.dart';
+import 'package:birdhelp/mes_signalements.dart';
 import 'package:birdhelp/setting.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ const Color githubColor = const Color(0xff202020);
 const Color googleColor = const Color(0xffDF4A32);
 
 List<Widget> pages = const [
+  MesSignalements(),
   MyAccountPage(),
   AcceuilPage(),
   AddFichePage(),
@@ -79,6 +81,9 @@ class CustomWidgets {
     int activeIndex;
 
     switch(contextString[0]){
+      case "MesSignalements":
+        activeIndex = 0;
+        break;
       case "MyAccountPage":
         activeIndex = 0;
         break;
