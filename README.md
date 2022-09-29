@@ -1,5 +1,7 @@
 ## birdhelp
 
+## Branche DEV is better ;)
+
 Une application pour recensé les animaux en difficulté pour pallier à la grippe aviaire
 
 # Getting Started
